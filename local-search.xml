@@ -4,6 +4,74 @@
   
   
   <entry>
+    <title>C++ 广度优先搜索 (BFS) 学习记录</title>
+    <link href="/2024/04/01/bfs-cpp/"/>
+    <url>/2024/04/01/bfs-cpp/</url>
+    
+    <content type="html"><![CDATA[<p><del>DFS 都学完了，不接着看看 BFS 吗？</del> 其实是我做题用到了。。</p><p>广度优先搜索是一种用于遍历或搜索树或图的算法。所谓“广度优先”，就是在遍历更深的节点之前，先把这一层的节点全部遍历。</p><p>我的理解是这样的：</p><blockquote><p>还是有一个人去某景区旅游，他现在在景区入口，景区里的一些路，有的能通到出口，有的不能。<del>怎么又是你。。</del></p><p>这个人呢喜欢欣赏沿途的风景，他不喜欢一次走到底，而是每走到一个交叉路口，都会把这个路口上的景点全看完，再往下走。</p><p>他走过了第一条路，来到了分叉点。他把这个分叉点对应的几个景点全游览一遍，然后才选择一条路往下走。走到下一个分叉点，再游览这一层所有的景点，然后才往下走……</p></blockquote><p>如果把这样一个景区抽象为一个图，那么也就是说，广度优先的搜索就是<strong>不走完这一层绝不罢休</strong>。</p><h2 id="与深度优先搜索的比较"><a href="#与深度优先搜索的比较" class="headerlink" title="与深度优先搜索的比较"></a>与深度优先搜索的比较</h2><p>广度优先搜索由于是<strong>逐层遍历</strong>，不需要<strong>回溯</strong>，因此也不像深度优先那样，容易因递归过多导致<strong>栈溢出</strong>。</p><p>一般来说，对于一道需要用搜索的题目，使用广度优先和深度优先<strong>理论上都可以解出来</strong>，但是广度优先需要考虑<strong>时间问题</strong>，深度优先则需要考虑<strong>空间问题</strong>。</p><h2 id="复杂度"><a href="#复杂度" class="headerlink" title="复杂度"></a>复杂度</h2><p>假设图中有 V 个顶点和 E 条边。</p><table><thead><tr><th>时间复杂度</th><th>空间复杂度</th></tr></thead><tbody><tr><td>O(V+E) (最坏情况) 或 O(V) (稀疏图)</td><td>O(V)</td></tr></tbody></table><p>最坏情况是指遍历<strong>所有的顶点和边</strong>；稀疏图是<strong>边数与顶点数成正比</strong>的图。</p><h2 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h2><h3 id="最短路径走迷宫"><a href="#最短路径走迷宫" class="headerlink" title="最短路径走迷宫"></a><a href="https://www.lanqiao.cn/problems/602/learning/">最短路径走迷宫</a></h3><p>我们以经典迷宫问题为例，用 BFS 实现最短路径查找：</p><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;iostream&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;queue&gt;</span></span><br><span class="hljs-keyword">using</span> <span class="hljs-keyword">namespace</span> std;<br><br><span class="hljs-keyword">struct</span> <span class="hljs-title class_">Node</span> &#123; <span class="hljs-type">int</span> x, y, step; &#125;;<br><br><span class="hljs-type">int</span> dx[] = &#123;<span class="hljs-number">-1</span>,<span class="hljs-number">1</span>,<span class="hljs-number">0</span>,<span class="hljs-number">0</span>&#125;;  <span class="hljs-comment">// 方向数组：上下左右</span><br><span class="hljs-type">int</span> dy[] = &#123;<span class="hljs-number">0</span>,<span class="hljs-number">0</span>,<span class="hljs-number">-1</span>,<span class="hljs-number">1</span>&#125;;<br><br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span> </span>&#123;<br>    <span class="hljs-type">int</span> n, m;<br>    cin &gt;&gt; n &gt;&gt; m;<br>    <span class="hljs-function">vector&lt;string&gt; <span class="hljs-title">maze</span><span class="hljs-params">(n)</span></span>;<br>    <span class="hljs-keyword">for</span>(<span class="hljs-keyword">auto</span> &amp;s : maze) cin &gt;&gt; s;<br>    <br>    queue&lt;Node&gt; q;<br>    <span class="hljs-comment">// 寻找起点</span><br>    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">0</span>; i&lt;n; i++)<br>        <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> j=<span class="hljs-number">0</span>; j&lt;m; j++)<br>            <span class="hljs-keyword">if</span>(maze[i][j] == <span class="hljs-string">&#x27;S&#x27;</span>) &#123;<br>                q.<span class="hljs-built_in">push</span>(&#123;i,j,<span class="hljs-number">0</span>&#125;);<br>                maze[i][j] = <span class="hljs-string">&#x27;#&#x27;</span>;  <span class="hljs-comment">// 标记已访问</span><br>            &#125;<br>    <br>    <span class="hljs-keyword">while</span>(!q.<span class="hljs-built_in">empty</span>()) &#123;<br>        <span class="hljs-keyword">auto</span> cur = q.<span class="hljs-built_in">front</span>();<br>        q.<span class="hljs-built_in">pop</span>();<br>        <br>        <span class="hljs-comment">// 尝试四个方向</span><br>        <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">0</span>; i&lt;<span class="hljs-number">4</span>; i++) &#123;<br>            <span class="hljs-type">int</span> nx = cur.x + dx[i];<br>            <span class="hljs-type">int</span> ny = cur.y + dy[i];<br>            <br>            <span class="hljs-keyword">if</span>(nx&gt;=<span class="hljs-number">0</span> &amp;&amp; nx&lt;n &amp;&amp; ny&gt;=<span class="hljs-number">0</span> &amp;&amp; ny&lt;m) &#123;<br>                <span class="hljs-keyword">if</span>(maze[nx][ny] == <span class="hljs-string">&#x27;T&#x27;</span>) &#123;  <span class="hljs-comment">// 找到终点</span><br>                    cout &lt;&lt; cur.step + <span class="hljs-number">1</span>;<br>                    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>                &#125;<br>                <span class="hljs-keyword">if</span>(maze[nx][ny] == <span class="hljs-string">&#x27;.&#x27;</span>) &#123;  <span class="hljs-comment">// 可通行</span><br>                    q.<span class="hljs-built_in">push</span>(&#123;nx, ny, cur.step+<span class="hljs-number">1</span>&#125;);<br>                    maze[nx][ny] = <span class="hljs-string">&#x27;#&#x27;</span>;    <span class="hljs-comment">// 标记已访问</span><br>                &#125;<br>            &#125;<br>        &#125;<br>    &#125;<br>    cout &lt;&lt; <span class="hljs-number">-1</span>;  <span class="hljs-comment">// 无法到达终点</span><br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure><p>代码关键点说明：</p><p>C++ 虽说有现成的<strong>队列容器</strong> <code>queue</code>，但是这里我们使用结构体存储坐标和步数。其实我觉得是因为不需要那么复杂的容器，直接一个结构体就能满足需求了。</p><p><strong>方向数组</strong>也是我们的老朋友了，在 DFS 中我们也用到了，作用是通过预定义方向简化代码。</p><p><strong>逐层扩展</strong>是 BFS 的核心，每次处理完一层才会处理下一层，保证最先到达终点的路径最短。</p><h3 id="算法步骤总结"><a href="#算法步骤总结" class="headerlink" title="算法步骤总结"></a>算法步骤总结</h3><ol><li>将起点加入队列并标记</li><li>循环直到队列为空：<ul><li>取出队首元素</li><li>如果是终点则返回步数</li><li>向四个方向扩展：<ul><li>越界则跳过</li><li>遇到障碍或已访问则跳过</li><li>合法位置则入队并标记</li></ul></li></ul></li><li>队列为空仍未找到则返回 -1</li></ol><h2 id="应用场景"><a href="#应用场景" class="headerlink" title="应用场景"></a>应用场景</h2><p>BFS 特别适合解决以下类型的问题：</p><ul><li><strong>最短路径问题</strong>（无权图）</li><li><strong>连通性检测</strong></li><li><strong>层级遍历</strong>（如二叉树的层序遍历）</li><li><strong>扩散类问题</strong>（如病毒传播模拟）</li></ul><h2 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h2><ol><li>记得在入队时立即标记已访问，否则可能重复入队导致 MLE</li><li>使用方向数组可以让代码更简洁</li><li>队列的 size 在每次处理完一层后可以获取当前层的节点数（适用于需要区分层的情况）</li><li>当需要记录路径时，可以增加一个 prev 指针或使用二维数组记录前驱节点</li></ol><p><del>最后还是要说：BFS 写起来比 DFS 麻烦，但找最短路径是真的香！</del></p>]]></content>
+    
+    
+    <categories>
+      
+      <category>算法</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>算法</tag>
+      
+      <tag>搜索</tag>
+      
+      <tag>C++</tag>
+      
+      <tag>算法竞赛</tag>
+      
+      <tag>广度优先搜索</tag>
+      
+      <tag>BFS</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>C++ 贪心算法 学习笔记</title>
+    <link href="/2024/03/31/greedy-cpp/"/>
+    <url>/2024/03/31/greedy-cpp/</url>
+    
+    <content type="html"><![CDATA[<p>做题又遇到贪心了，这次我一定要攻下来。</p><h2 id="什么是贪心算法？"><a href="#什么是贪心算法？" class="headerlink" title="什么是贪心算法？"></a>什么是贪心算法？</h2><p><em>贪心算法 &#x2F; 贪婪算法（greedy algorithm）</em>，是指，在对问题求解时，<strong>总是做出在当前看来是最好的选择</strong>。也就是说，<strong>不从整体最优</strong>上加以考虑，算法得到的是在某种意义上的<strong>局部最优解</strong>。</p><p>换句话说，我只考虑这个阶段的最佳选择，而不是直接从全局入手综合考虑。当我每一步都都是最佳选择的时候，那么最后一步做完了，应该也就是最佳的选择了。</p><p>贪心算法不是所有问题都能得到最优解，关键是选择正确的贪心策略。</p><p>贪心算法一般按如下步骤进行：  </p><ol><li><p>建立数学模型来描述问题。</p></li><li><p>把求解的问题分成若干个子问题。</p></li><li><p>对每个子问题求解，得到子问题的局部最优解。</p></li><li><p>把子问题的解局部最优解合成原来解问题的一个解。</p></li></ol><h2 id="什么时候用贪心算法？"><a href="#什么时候用贪心算法？" class="headerlink" title="什么时候用贪心算法？"></a>什么时候用贪心算法？</h2><p>贪心策略的前提是：<strong>局部最优策略能产生全局最优解</strong>。</p><p>实际上，贪心算法使用的情况比较少，一般对一个问题分析是否适用于贪心算法，可以先选择该问题下的几个<strong>实际数据</strong>进行分析可以做出判断。</p><h2 id="例题"><a href="#例题" class="headerlink" title="例题"></a>例题</h2><h3 id="答疑"><a href="#答疑" class="headerlink" title="答疑"></a><a href="https://www.lanqiao.cn/problems/1025/learning/">答疑</a></h3><p><strong>题目分析</strong><br>要使发消息时刻之和最小，需合理安排答疑顺序。通过贪心策略，按每位同学的（进入时间 + 答疑时间 + 离开时间）总和由小到大排序。该策略可保证后续同学尽早开始答疑，降低总时间累积。</p><p><strong>实现代码</strong>  </p><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;iostream&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;vector&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;algorithm&gt;</span></span><br><span class="hljs-keyword">using</span> <span class="hljs-keyword">namespace</span> std;<br><br><span class="hljs-keyword">struct</span> <span class="hljs-title class_">Student</span> &#123;<br>    <span class="hljs-type">int</span> s, a, e;<br>    <span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">total</span><span class="hljs-params">()</span> <span class="hljs-type">const</span> </span>&#123; <span class="hljs-keyword">return</span> s + a + e; &#125;<br>&#125;;<br><br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span> </span>&#123;<br>    <span class="hljs-type">int</span> n;<br>    cin &gt;&gt; n;<br>    <span class="hljs-function">vector&lt;Student&gt; <span class="hljs-title">students</span><span class="hljs-params">(n)</span></span>;<br>    <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt; n; ++i)<br>        cin &gt;&gt; students[i].s &gt;&gt; students[i].a &gt;&gt; students[i].e;<br>    <br>    <span class="hljs-built_in">sort</span>(students.<span class="hljs-built_in">begin</span>(), students.<span class="hljs-built_in">end</span>(), [](<span class="hljs-type">const</span> Student&amp; x, <span class="hljs-type">const</span> Student&amp; y) &#123;<br>        <span class="hljs-keyword">return</span> x.<span class="hljs-built_in">total</span>() &lt; y.<span class="hljs-built_in">total</span>();<br>    &#125;);<br>    <br>    <span class="hljs-type">long</span> <span class="hljs-type">long</span> current_time = <span class="hljs-number">0</span>, sum = <span class="hljs-number">0</span>;<br>    <span class="hljs-keyword">for</span> (<span class="hljs-type">const</span> <span class="hljs-keyword">auto</span>&amp; stu : students) &#123;<br>        sum += current_time + stu.s + stu.a;<br>        current_time += stu.s + stu.a + stu.e;<br>    &#125;<br>    cout &lt;&lt; sum;<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure><p><strong>算法说明</strong>  </p><ol><li>结构体封装：整合学生的时间参数（进入&#x2F;答疑&#x2F;离开）</li><li>排序规则：按总处理时间（s+a+e）升序排列</li><li>时间计算：  <ul><li>发消息时刻 &#x3D; 当前队列总耗时 + 当前学生进入和答疑时间</li><li>总耗时更新时需包含完整处理时间（含离开时间）</li></ul></li></ol><p><strong>复杂度</strong>  </p><ul><li>时间复杂度：O(n log n)</li><li>空间复杂度：O(n)</li></ul>]]></content>
+    
+    
+    <categories>
+      
+      <category>算法</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>算法</tag>
+      
+      <tag>搜索</tag>
+      
+      <tag>C++</tag>
+      
+      <tag>算法竞赛</tag>
+      
+      <tag>贪心</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>解决 KRDC 远程连接时没有协议的问题</title>
     <link href="/2024/03/31/krdc-no-protocol-solution/"/>
     <url>/2024/03/31/krdc-no-protocol-solution/</url>
@@ -184,9 +252,9 @@
       
       <tag>C++</tag>
       
-      <tag>C</tag>
-      
       <tag>算法竞赛</tag>
+      
+      <tag>C</tag>
       
     </tags>
     
@@ -300,11 +368,11 @@
       
       <tag>算法</tag>
       
+      <tag>搜索</tag>
+      
       <tag>C++</tag>
       
       <tag>算法竞赛</tag>
-      
-      <tag>搜索</tag>
       
       <tag>深度优先搜索</tag>
       
