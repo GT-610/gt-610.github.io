@@ -4,6 +4,39 @@
   
   
   <entry>
+    <title>PyTorch 加速下载，使用国内镜像源</title>
+    <link href="/2025/05/22/pytorch-mirrors/"/>
+    <url>/2025/05/22/pytorch-mirrors/</url>
+    
+    <content type="html"><![CDATA[<p>PyTorch 是一个非常流行的深度学习框架，但是，官方的 PyTorch 下载地址在国外，访问速度很慢。</p><p><img src="/2025/05/22/pytorch-mirrors/official-download-site.jpeg" alt="GPU 版本的索引是 PyTorch 自家的"></p><p>由于众所周知的原因，下载速度和链接很不稳定。网上给的答案都是去使用阿里云镜像，然而阿里云的镜像好久没更新了，根本没法满足现在的需求。</p><p><img src="/2025/05/22/pytorch-mirrors/fake-links.jpeg" alt="甚至还有拿 AI 洗稿的，清华和上交根本没有 PyTorch 镜像源，就这也不自己审核一下……"></p><p>所以真的没办法了吗？</p><h2 id="使用南京大学镜像源"><a href="#使用南京大学镜像源" class="headerlink" title="使用南京大学镜像源"></a>使用南京大学镜像源</h2><p>这里介绍一个比较冷门但质量稳定的镜像源：<strong>南京大学开源镜像站</strong>。它们一直在同步官方最新的 PyTorch 镜像源，并且速度非常快。</p><p><img src="/2025/05/22/pytorch-mirrors/nju-mirror-status.jpeg" alt="咱也不知道为啥失败了，但总归够用了"></p><p>使用方法就是将安装命令中的 <code>https://download.pytorch.org/whl/</code> 替换为 <code>https://mirrors.nju.edu.cn/pytorch/whl/</code>。</p><p>比如，你要安装 CUDA 12.6 的 PyTorch，官方的安装命令是：</p><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sh">pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu126<br></code></pre></td></tr></table></figure><p>你只需要改成：</p><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sh">pip3 install torch torchvision torchaudio --index-url https://mirrors.nju.edu.cn/pytorch/whl/cu126<br></code></pre></td></tr></table></figure><p>然后就可以了。</p><h2 id="目前的问题"><a href="#目前的问题" class="headerlink" title="目前的问题"></a>目前的问题</h2><p>截止 2025年 5 月 22 日，该镜像站仍然存在一些问题：</p><ul><li>CUDA 12.8 （<code>cu128</code>）版本的 PyTorch 无法安装。</li><li>最后一次更新是一个月前，而且最近几次的同步都失败了，不知道为什么。据说是因为 PyTorch 上游调整了镜像站的访问。</li></ul><p>但是这也是国内唯一一个比较新的 PyTorch 镜像站了。<del>有总比没有好。</del></p><h2 id="速度"><a href="#速度" class="headerlink" title="速度"></a>速度</h2><p><img src="/2025/05/22/pytorch-mirrors/speed.png" alt="300 兆的电信校园网下，最高能跑到 32.5 MB/s"></p><p>速度还是非常快的，稳定性和其他镜像站差不多。</p><div class="note note-info">            <p>我记得去年我还和南大的朋友聊起他们的镜像站，他说他们南大学生自己都不用，因为机房的网络设备都是十几年前的老古董了……当时南大镜像站的下载速度只有 4MB&#x2F;s。</p>          </div>]]></content>
+    
+    
+    <categories>
+      
+      <category>技术</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>Python</tag>
+      
+      <tag>PyTorch</tag>
+      
+      <tag>镜像配置</tag>
+      
+      <tag>环境配置</tag>
+      
+      <tag>深度学习</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>C++ 广度优先搜索 (BFS) 学习记录</title>
     <link href="/2024/04/01/bfs-cpp/"/>
     <url>/2024/04/01/bfs-cpp/</url>
@@ -22,11 +55,11 @@
       
       <tag>算法</tag>
       
-      <tag>搜索</tag>
-      
       <tag>C++</tag>
       
       <tag>算法竞赛</tag>
+      
+      <tag>搜索</tag>
       
       <tag>广度优先搜索</tag>
       
@@ -57,11 +90,11 @@
       
       <tag>算法</tag>
       
-      <tag>搜索</tag>
-      
       <tag>C++</tag>
       
       <tag>算法竞赛</tag>
+      
+      <tag>搜索</tag>
       
       <tag>贪心</tag>
       
@@ -252,9 +285,9 @@
       
       <tag>C++</tag>
       
-      <tag>算法竞赛</tag>
-      
       <tag>C</tag>
+      
+      <tag>算法竞赛</tag>
       
     </tags>
     
@@ -368,11 +401,11 @@
       
       <tag>算法</tag>
       
-      <tag>搜索</tag>
-      
       <tag>C++</tag>
       
       <tag>算法竞赛</tag>
+      
+      <tag>搜索</tag>
       
       <tag>深度优先搜索</tag>
       
