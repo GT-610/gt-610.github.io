@@ -7,8 +7,11 @@
 
 <head>
   <meta charset="UTF-8">
+
   <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
   <link rel="icon" href="/img/fluid.png">
+  
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
   <meta http-equiv="x-ua-compatible" content="ie=edge">
   
@@ -27,9 +30,9 @@
 <meta property="article:modified_time" content="2025-05-21T04:35:15.565Z">
 <meta property="article:author" content="GT610">
 <meta property="article:tag" content="算法">
+<meta property="article:tag" content="搜索">
 <meta property="article:tag" content="C++">
 <meta property="article:tag" content="算法竞赛">
-<meta property="article:tag" content="搜索">
 <meta property="article:tag" content="广度优先搜索">
 <meta property="article:tag" content="BFS">
 <meta name="twitter:card" content="summary_large_image">
@@ -53,7 +56,7 @@
 <!-- 主题依赖的图标库，不要自行修改 -->
 <!-- Do not modify the link that theme dependent icons -->
 
-<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
 
 
 
@@ -75,7 +78,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"gt-610.github.io","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"gt-610.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null},"woyaola":null,"cnzz":null},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -92,7 +95,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
-<!-- hexo injector head_end end --><meta name="generator" content="Hexo 7.1.1"></head>
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 7.3.0"></head>
 
 
 <body>
@@ -309,7 +312,7 @@
 </tbody></table>
 <p>最坏情况是指遍历<strong>所有的顶点和边</strong>；稀疏图是<strong>边数与顶点数成正比</strong>的图。</p>
 <h2 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h2><h3 id="最短路径走迷宫"><a href="#最短路径走迷宫" class="headerlink" title="最短路径走迷宫"></a><a target="_blank" rel="noopener" href="https://www.lanqiao.cn/problems/602/learning/">最短路径走迷宫</a></h3><p>我们以经典迷宫问题为例，用 BFS 实现最短路径查找：</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;iostream&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;queue&gt;</span></span><br><span class="hljs-keyword">using</span> <span class="hljs-keyword">namespace</span> std;<br><br><span class="hljs-keyword">struct</span> <span class="hljs-title class_">Node</span> &#123; <span class="hljs-type">int</span> x, y, step; &#125;;<br><br><span class="hljs-type">int</span> dx[] = &#123;<span class="hljs-number">-1</span>,<span class="hljs-number">1</span>,<span class="hljs-number">0</span>,<span class="hljs-number">0</span>&#125;;  <span class="hljs-comment">// 方向数组：上下左右</span><br><span class="hljs-type">int</span> dy[] = &#123;<span class="hljs-number">0</span>,<span class="hljs-number">0</span>,<span class="hljs-number">-1</span>,<span class="hljs-number">1</span>&#125;;<br><br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span> </span>&#123;<br>    <span class="hljs-type">int</span> n, m;<br>    cin &gt;&gt; n &gt;&gt; m;<br>    <span class="hljs-function">vector&lt;string&gt; <span class="hljs-title">maze</span><span class="hljs-params">(n)</span></span>;<br>    <span class="hljs-keyword">for</span>(<span class="hljs-keyword">auto</span> &amp;s : maze) cin &gt;&gt; s;<br>    <br>    queue&lt;Node&gt; q;<br>    <span class="hljs-comment">// 寻找起点</span><br>    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">0</span>; i&lt;n; i++)<br>        <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> j=<span class="hljs-number">0</span>; j&lt;m; j++)<br>            <span class="hljs-keyword">if</span>(maze[i][j] == <span class="hljs-string">&#x27;S&#x27;</span>) &#123;<br>                q.<span class="hljs-built_in">push</span>(&#123;i,j,<span class="hljs-number">0</span>&#125;);<br>                maze[i][j] = <span class="hljs-string">&#x27;#&#x27;</span>;  <span class="hljs-comment">// 标记已访问</span><br>            &#125;<br>    <br>    <span class="hljs-keyword">while</span>(!q.<span class="hljs-built_in">empty</span>()) &#123;<br>        <span class="hljs-keyword">auto</span> cur = q.<span class="hljs-built_in">front</span>();<br>        q.<span class="hljs-built_in">pop</span>();<br>        <br>        <span class="hljs-comment">// 尝试四个方向</span><br>        <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">0</span>; i&lt;<span class="hljs-number">4</span>; i++) &#123;<br>            <span class="hljs-type">int</span> nx = cur.x + dx[i];<br>            <span class="hljs-type">int</span> ny = cur.y + dy[i];<br>            <br>            <span class="hljs-keyword">if</span>(nx&gt;=<span class="hljs-number">0</span> &amp;&amp; nx&lt;n &amp;&amp; ny&gt;=<span class="hljs-number">0</span> &amp;&amp; ny&lt;m) &#123;<br>                <span class="hljs-keyword">if</span>(maze[nx][ny] == <span class="hljs-string">&#x27;T&#x27;</span>) &#123;  <span class="hljs-comment">// 找到终点</span><br>                    cout &lt;&lt; cur.step + <span class="hljs-number">1</span>;<br>                    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>                &#125;<br>                <span class="hljs-keyword">if</span>(maze[nx][ny] == <span class="hljs-string">&#x27;.&#x27;</span>) &#123;  <span class="hljs-comment">// 可通行</span><br>                    q.<span class="hljs-built_in">push</span>(&#123;nx, ny, cur.step+<span class="hljs-number">1</span>&#125;);<br>                    maze[nx][ny] = <span class="hljs-string">&#x27;#&#x27;</span>;    <span class="hljs-comment">// 标记已访问</span><br>                &#125;<br>            &#125;<br>        &#125;<br>    &#125;<br>    cout &lt;&lt; <span class="hljs-number">-1</span>;  <span class="hljs-comment">// 无法到达终点</span><br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;iostream&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;queue&gt;</span></span><br><span class="hljs-keyword">using</span> <span class="hljs-keyword">namespace</span> std;<br><br><span class="hljs-keyword">struct</span> <span class="hljs-title class_">Node</span> &#123; <span class="hljs-type">int</span> x, y, step; &#125;;<br><br><span class="hljs-type">int</span> dx[] = &#123;<span class="hljs-number">-1</span>,<span class="hljs-number">1</span>,<span class="hljs-number">0</span>,<span class="hljs-number">0</span>&#125;;  <span class="hljs-comment">// 方向数组：上下左右</span><br><span class="hljs-type">int</span> dy[] = &#123;<span class="hljs-number">0</span>,<span class="hljs-number">0</span>,<span class="hljs-number">-1</span>,<span class="hljs-number">1</span>&#125;;<br><br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span> </span>&#123;<br>    <span class="hljs-type">int</span> n, m;<br>    cin &gt;&gt; n &gt;&gt; m;<br>    <span class="hljs-function">vector&lt;string&gt; <span class="hljs-title">maze</span><span class="hljs-params">(n)</span></span>;<br>    <span class="hljs-keyword">for</span>(<span class="hljs-keyword">auto</span> &amp;s : maze) cin &gt;&gt; s;<br>    <br>    queue&lt;Node&gt; q;<br>    <span class="hljs-comment">// 寻找起点</span><br>    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">0</span>; i&lt;n; i++)<br>        <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> j=<span class="hljs-number">0</span>; j&lt;m; j++)<br>            <span class="hljs-keyword">if</span>(maze[i][j] == <span class="hljs-string">&#x27;S&#x27;</span>) &#123;<br>                q.<span class="hljs-built_in">push</span>(&#123;i,j,<span class="hljs-number">0</span>&#125;);<br>                maze[i][j] = <span class="hljs-string">&#x27;#&#x27;</span>;  <span class="hljs-comment">// 标记已访问</span><br>            &#125;<br>    <br>    <span class="hljs-keyword">while</span>(!q.<span class="hljs-built_in">empty</span>()) &#123;<br>        <span class="hljs-keyword">auto</span> cur = q.<span class="hljs-built_in">front</span>();<br>        q.<span class="hljs-built_in">pop</span>();<br>        <br>        <span class="hljs-comment">// 尝试四个方向</span><br>        <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">0</span>; i&lt;<span class="hljs-number">4</span>; i++) &#123;<br>            <span class="hljs-type">int</span> nx = cur.x + dx[i];<br>            <span class="hljs-type">int</span> ny = cur.y + dy[i];<br>            <br>            <span class="hljs-keyword">if</span>(nx&gt;=<span class="hljs-number">0</span> &amp;&amp; nx&lt;n &amp;&amp; ny&gt;=<span class="hljs-number">0</span> &amp;&amp; ny&lt;m) &#123;<br>                <span class="hljs-keyword">if</span>(maze[nx][ny] == <span class="hljs-string">&#x27;T&#x27;</span>) &#123;  <span class="hljs-comment">// 找到终点</span><br>                    cout &lt;&lt; cur.step + <span class="hljs-number">1</span>;<br>                    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>                &#125;<br>                <span class="hljs-keyword">if</span>(maze[nx][ny] == <span class="hljs-string">&#x27;.&#x27;</span>) &#123;  <span class="hljs-comment">// 可通行</span><br>                    q.<span class="hljs-built_in">push</span>(&#123;nx, ny, cur.step<span class="hljs-number">+1</span>&#125;);<br>                    maze[nx][ny] = <span class="hljs-string">&#x27;#&#x27;</span>;    <span class="hljs-comment">// 标记已访问</span><br>                &#125;<br>            &#125;<br>        &#125;<br>    &#125;<br>    cout &lt;&lt; <span class="hljs-number">-1</span>;  <span class="hljs-comment">// 无法到达终点</span><br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
 
 <p>代码关键点说明：</p>
 <p>C++ 虽说有现成的<strong>队列容器</strong> <code>queue</code>，但是这里我们使用结构体存储坐标和步数。其实我觉得是因为不需要那么复杂的容器，直接一个结构体就能满足需求了。</p>
@@ -379,11 +382,11 @@
       
         <a href="/tags/%E7%AE%97%E6%B3%95/" class="print-no-link">#算法</a>
       
+        <a href="/tags/%E6%90%9C%E7%B4%A2/" class="print-no-link">#搜索</a>
+      
         <a href="/tags/C/" class="print-no-link">#C++</a>
       
         <a href="/tags/%E7%AE%97%E6%B3%95%E7%AB%9E%E8%B5%9B/" class="print-no-link">#算法竞赛</a>
-      
-        <a href="/tags/%E6%90%9C%E7%B4%A2/" class="print-no-link">#搜索</a>
       
         <a href="/tags/%E5%B9%BF%E5%BA%A6%E4%BC%98%E5%85%88%E6%90%9C%E7%B4%A2/" class="print-no-link">#广度优先搜索</a>
       
@@ -425,7 +428,7 @@
               
                 <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
                   <span class="hint--top hint--rounded" aria-label="BY - 署名">
-                    <i class="iconfont icon-by"></i>
+                    <i class="iconfont icon-cc-by"></i>
                   </span>
                 </a>
               
@@ -575,7 +578,6 @@
     <div class="footer-content">
        <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
     </div>
-  
   
   
   

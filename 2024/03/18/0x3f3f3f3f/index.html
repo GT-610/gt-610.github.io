@@ -7,8 +7,11 @@
 
 <head>
   <meta charset="UTF-8">
+
   <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
   <link rel="icon" href="/img/fluid.png">
+  
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
   <meta http-equiv="x-ua-compatible" content="ie=edge">
   
@@ -28,8 +31,8 @@
 <meta property="article:author" content="GT610">
 <meta property="article:tag" content="算法">
 <meta property="article:tag" content="C++">
-<meta property="article:tag" content="C">
 <meta property="article:tag" content="算法竞赛">
+<meta property="article:tag" content="C">
 <meta name="twitter:card" content="summary_large_image">
   
   
@@ -51,7 +54,7 @@
 <!-- 主题依赖的图标库，不要自行修改 -->
 <!-- Do not modify the link that theme dependent icons -->
 
-<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
 
 
 
@@ -73,7 +76,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"gt-610.github.io","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"gt-610.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null},"woyaola":null,"cnzz":null},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -90,7 +93,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
-<!-- hexo injector head_end end --><meta name="generator" content="Hexo 7.1.1"></head>
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 7.3.0"></head>
 
 
 <body>
@@ -286,10 +289,10 @@
 
 <p>一般去找最小值的题目的时候，我会定义一个<strong>很大很大的数</strong>，这样方便之后是逐步更新。但这个很大很大的数，究竟该多少呢？</p>
 <p>我们并不知道输入的数据会有多大，所以我们也不好去定义这样一个大的数。<code>0x3f3f3f3f</code> 就解决了这样一个问题。</p>
-<p><code>0x3f3f3f3f</code> 的十进制表示是 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1061109567</mn></mrow><annotation encoding="application/x-tex">1061109567</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">1</span><span class="mord">0</span><span class="mord">6</span><span class="mord">1</span><span class="mord">1</span><span class="mord">0</span><span class="mord">9</span><span class="mord">5</span><span class="mord">6</span><span class="mord">7</span></span></span></span>，这个数的大小是 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><msup><mn>0</mn><mn>9</mn></msup></mrow><annotation encoding="application/x-tex">10^9</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8141079999999999em;vertical-align:0em;"></span><span class="mord">1</span><span class="mord"><span class="mord">0</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141079999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">9</span></span></span></span></span></span></span></span></span></span></span> 级别的，而一般的整型数据<strong>不会高于 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><msup><mn>0</mn><mn>9</mn></msup></mrow><annotation encoding="application/x-tex">10^9</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8141079999999999em;vertical-align:0em;"></span><span class="mord">1</span><span class="mord"><span class="mord">0</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141079999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">9</span></span></span></span></span></span></span></span></span></span></span><strong>。因此，我们可以认为这个数是一个</strong>非常大的数</strong>。</p>
+<p><code>0x3f3f3f3f</code> 的十进制表示是 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1061109567</mn></mrow><annotation encoding="application/x-tex">1061109567</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">1061109567</span></span></span></span>，这个数的大小是 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mn>10</mn><mn>9</mn></msup></mrow><annotation encoding="application/x-tex">10^9</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8141em;"></span><span class="mord">1</span><span class="mord"><span class="mord">0</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">9</span></span></span></span></span></span></span></span></span></span></span> 级别的，而一般的整型数据<strong>不会高于 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mn>10</mn><mn>9</mn></msup></mrow><annotation encoding="application/x-tex">10^9</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8141em;"></span><span class="mord">1</span><span class="mord"><span class="mord">0</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">9</span></span></span></span></span></span></span></span></span></span></span><strong>。因此，我们可以认为这个数是一个</strong>非常大的数</strong>。</p>
 <h2 id="为什么用这个数？"><a href="#为什么用这个数？" class="headerlink" title="为什么用这个数？"></a>为什么用这个数？</h2><p>我的观点是，说简单点就是两个字：<strong>省事</strong>。这个数非常好记，拿来就用。</p>
 <p>直到我看到这样一篇文章：</p>
-<blockquote><p>由于一般的数据都不会大于 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><msup><mn>0</mn><mn>9</mn></msup></mrow><annotation encoding="application/x-tex">10^9</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8141079999999999em;vertical-align:0em;"></span><span class="mord">1</span><span class="mord"><span class="mord">0</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141079999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">9</span></span></span></span></span></span></span></span></span></span></span>，所以当我们把<strong>无穷大加上一个数据</strong>时，它<strong>并不会溢出</strong>（这就满足了“无穷大加一个有穷的数依然是无穷大”），事实上 <code>0x3f3f3f3f</code> + <code>0x3f3f3f3f</code> &#x3D; 2122219134，这非常大但却没有超过 32-bit int 的表示范围，所以 <code>0x3f3f3f3f</code> 还<strong>满足了我们“无穷大加无穷大还是无穷大”的需求</strong>。</p>
+<blockquote><p>由于一般的数据都不会大于 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mn>10</mn><mn>9</mn></msup></mrow><annotation encoding="application/x-tex">10^9</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8141em;"></span><span class="mord">1</span><span class="mord"><span class="mord">0</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">9</span></span></span></span></span></span></span></span></span></span></span>，所以当我们把<strong>无穷大加上一个数据</strong>时，它<strong>并不会溢出</strong>（这就满足了“无穷大加一个有穷的数依然是无穷大”），事实上 <code>0x3f3f3f3f</code> + <code>0x3f3f3f3f</code> &#x3D; 2122219134，这非常大但却没有超过 32-bit int 的表示范围，所以 <code>0x3f3f3f3f</code> 还<strong>满足了我们“无穷大加无穷大还是无穷大”的需求</strong>。</p>
 <p>最后，<code>0x3f3f3f3f</code> 还能给我们带来一个意想不到的额外好处：<br>如果我们想要将某个数组清零，我们通常会使用 <code>memset(a,0,sizeof(a))</code>，方便又高效，但是当我们想将某个数组全部赋值为无穷大时，就不能使用 <code>memset</code> 函数而得自己写循环了，因为 <code>memset</code> 是按字节操作的，它能够对数组清零是因为 <code>0</code> 的每个字节都是 <code>0</code>（一般我们只有赋值为 <code>-1</code> 和 <code>0</code> 的时候才使用它）。现在好了，如果我们将无穷大设为 <code>0x3f3f3f3f</code>，那么奇迹就发生了，<code>0x3f3f3f3f</code> 的每个字节都是 <code>0x3f</code>！所以要把一段内存全部置为无穷大，我们只需要 <code>memset(a,0x3f,sizeof(a))</code>。</p>
 <footer><strong>【算法设计与数据结构】为何程序员喜欢将INF设置为 0x3f3f3f3f？</strong><cite><a target="_blank" rel="noopener" href="https://blog.csdn.net/jiange_zh/article/details/50198097">blog.csdn.net/jiange_zh/article/details/50198097</a></cite></footer></blockquote>
 
@@ -311,9 +314,9 @@
       
         <a href="/tags/C/" class="print-no-link">#C++</a>
       
-        <a href="/tags/C/" class="print-no-link">#C</a>
-      
         <a href="/tags/%E7%AE%97%E6%B3%95%E7%AB%9E%E8%B5%9B/" class="print-no-link">#算法竞赛</a>
+      
+        <a href="/tags/C/" class="print-no-link">#C</a>
       
     </div>
   
@@ -351,7 +354,7 @@
               
                 <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
                   <span class="hint--top hint--rounded" aria-label="BY - 署名">
-                    <i class="iconfont icon-by"></i>
+                    <i class="iconfont icon-cc-by"></i>
                   </span>
                 </a>
               
@@ -501,7 +504,6 @@
     <div class="footer-content">
        <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
     </div>
-  
   
   
   
