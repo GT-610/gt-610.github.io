@@ -1,62 +1,948 @@
-<!DOCTYPE html><html lang="zh-CN" data-default-color-scheme="auto"><head><meta charset="UTF-8"><link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png"><link rel="icon" href="/img/fluid.png"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=5,shrink-to-fit=no"><meta http-equiv="x-ua-compatible" content="ie=edge"><meta name="theme-color" content="#2f4154"><meta name="author" content="GT610"><meta name="keywords" content=""><meta name="description" content="最近在看《通过例子学 Rust》，真切感受到了 Rust 有多么难学设计有多么精巧。作为一门安全性和效率优先的编程语言，Rust 的语法个人感觉是半 C 半 Python，但结构上明显比二者都复杂。 在写第一个语句  1println!(&quot;Hello, world!&quot;);  的时候，我很好奇为什么 println 后面要加一个感叹号 !。查阅后得知，这是一种 Rust 宏。 什"><meta property="og:type" content="article"><meta property="og:title" content="随便讲讲 Rust 的 “宏”"><meta property="og:url" content="https://gt-610.github.io/2024/03/28/rust-macro/index.html"><meta property="og:site_name" content="GT610&#39;s Blog"><meta property="og:description" content="最近在看《通过例子学 Rust》，真切感受到了 Rust 有多么难学设计有多么精巧。作为一门安全性和效率优先的编程语言，Rust 的语法个人感觉是半 C 半 Python，但结构上明显比二者都复杂。 在写第一个语句  1println!(&quot;Hello, world!&quot;);  的时候，我很好奇为什么 println 后面要加一个感叹号 !。查阅后得知，这是一种 Rust 宏。 什"><meta property="og:locale" content="zh_CN"><meta property="article:published_time" content="2024-03-28T09:04:56.000Z"><meta property="article:modified_time" content="2024-03-30T14:51:21.832Z"><meta property="article:author" content="GT610"><meta property="article:tag" content="Rust 语言"><meta property="article:tag" content="宏"><meta property="article:tag" content="macro"><meta name="twitter:card" content="summary_large_image"><meta name="referrer" content="no-referrer-when-downgrade"><title>随便讲讲 Rust 的 “宏” - GT610&#39;s Blog</title><link rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css"><link rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css"><link rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css"><link rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css"><link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css"><link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css"><link rel="stylesheet" href="//at.alicdn.com/t/c/font_4430671_lkk4qpja1mj.css"><link rel="stylesheet" href="/css/main.css"><link id="highlight-css" rel="stylesheet" href="/css/highlight.css"><link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css"><script id="fluid-configs">var Fluid=window.Fluid||{};Fluid.ctx=Object.assign({},Fluid.ctx);var dntVal,CONFIG={hostname:"gt-610.github.io",root:"/",version:"1.9.8",typing:{enable:!0,typeSpeed:70,cursorChar:"_",loop:!1,scope:[]},anchorjs:{enable:!0,element:"h1,h2,h3,h4,h5,h6",placement:"left",visible:"hover",icon:""},progressbar:{enable:!0,height_px:3,color:"#29d",options:{showSpinner:!1,trickleSpeed:100}},code_language:{enable:!0,default:"TEXT"},copy_btn:!0,image_caption:{enable:!0},image_zoom:{enable:!0,img_url_replace:["",""]},toc:{enable:!0,placement:"right",headingSelector:"h1,h2,h3,h4,h5,h6",collapseDepth:0},lazyload:{enable:!0,loading_img:"/img/loading.gif",onlypost:!1,offset_factor:2},web_analytics:{enable:!1,follow_dnt:!0,baidu:null,google:{measurement_id:null},tencent:{sid:null,cid:null},leancloud:{app_id:null,app_key:null,server_url:null,path:"window.location.pathname",ignore_local:!1},umami:{src:null,website_id:null,domains:null,start_time:"2024-01-01T00:00:00.000Z",token:null,api_server:null},woyaola:null,cnzz:null},search_path:"/local-search.xml",include_content_in_search:!0};CONFIG.web_analytics.follow_dnt&&(dntVal=navigator.doNotTrack||window.doNotTrack||navigator.msDoNotTrack,Fluid.ctx.dnt=dntVal&&(dntVal.startsWith("1")||dntVal.startsWith("yes")||dntVal.startsWith("on")))</script><script src="/js/utils.js"></script><script src="/js/color-schema.js"></script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css"><meta name="generator" content="Hexo 7.3.0"></head><body><header><div class="header-inner" style="height:70vh"><nav id="navbar" class="navbar fixed-top navbar-expand-lg navbar-dark scrolling-navbar"><div class="container"><a class="navbar-brand" href="/"><strong>GT610&#39;s Blog</strong> </a><button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><div class="animated-icon"><span></span><span></span><span></span></div></button><div class="collapse navbar-collapse" id="navbarSupportedContent"><ul class="navbar-nav ml-auto text-center"><li class="nav-item"><a class="nav-link" href="/" target="_self"><i class="iconfont icon-home-fill"></i> <span>首页</span></a></li><li class="nav-item"><a class="nav-link" href="/archives/" target="_self"><i class="iconfont icon-archive-fill"></i> <span>归档</span></a></li><li class="nav-item"><a class="nav-link" href="/categories/" target="_self"><i class="iconfont icon-category-fill"></i> <span>分类</span></a></li><li class="nav-item"><a class="nav-link" href="/tags/" target="_self"><i class="iconfont icon-tags-fill"></i> <span>标签</span></a></li><li class="nav-item"><a class="nav-link" href="/about/" target="_self"><i class="iconfont icon-user-fill"></i> <span>关于</span></a></li><li class="nav-item"><a class="nav-link" href="/links/" target="_self"><i class="iconfont icon-link-fill"></i> <span>友链</span></a></li><li class="nav-item" id="search-btn"><a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search"><i class="iconfont icon-search"></i></a></li><li class="nav-item" id="color-toggle-btn"><a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle"><i class="iconfont icon-dark" id="color-toggle-icon"></i></a></li></ul></div></div></nav><div id="banner" class="banner" parallax="true" style="background:url(/img/banners/rust-macro.png) no-repeat center center;background-size:cover"><div class="full-bg-img"><div class="mask flex-center" style="background-color:rgba(0,0,0,.3)"><div class="banner-text text-center fade-in-up"><div class="h2"><span id="subtitle" data-typed-text="随便讲讲 Rust 的 “宏”"></span></div><div class="mt-3"><span class="post-meta"><i class="iconfont icon-date-fill" aria-hidden="true"></i> <time datetime="2024-03-28 17:04" pubdate>2024年3月28日 下午</time></span></div><div class="mt-1"><span class="post-meta mr-2"><i class="iconfont icon-chart"></i> 2.4k 字 </span><span class="post-meta mr-2"><i class="iconfont icon-clock-fill"></i> 21 分钟 </span><span id="busuanzi_container_page_pv" style="display:none"><i class="iconfont icon-eye" aria-hidden="true"></i> <span id="busuanzi_value_page_pv"></span> 次</span></div></div></div></div></div></div></header><main><div class="container-fluid nopadding-x"><div class="row nomargin-x"><div class="side-col d-none d-lg-block col-lg-2"></div><div class="col-lg-8 nopadding-x-md"><div class="container nopadding-x-md" id="board-ctn"><div id="board"><article class="post-content mx-auto"><h1 id="seo-header">随便讲讲 Rust 的 “宏”</h1><div class="markdown-body"><p>最近在看《通过例子学 Rust》，真切感受到了 Rust <del>有多么难学</del>设计有多么精巧。作为一门安全性和效率优先的编程语言，Rust 的语法个人感觉是半 C 半 Python，但结构上明显比二者都复杂。</p><p>在写第一个语句</p><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs rust"><span class="hljs-built_in">println!</span>(<span class="hljs-string">&quot;Hello, world!&quot;</span>);<br></code></pre></td></tr></table></figure><p>的时候，我很好奇为什么 <code>println</code> 后面要加一个感叹号 <code>!</code>。查阅后得知，这是一种 Rust <strong>宏</strong>。</p><h2 id="什么是宏？"><a href="#什么是宏？" class="headerlink" title="什么是宏？"></a>什么是宏？</h2><p>在 Rust 中，<em>宏（macros）</em> 是一种<strong>元编程的工具</strong>，允许你在编译时<strong>对代码进行模式匹配、转换和生成</strong>。宏允许你编写一些特定的代码模板，在编译时根据这些模板生成具体的代码。这使得你可以编写更加灵活、通用和高效的代码。</p><p>其实说得简单点，这个宏和 C&#x2F;C++ 中的宏定义是一个性质的，起到<strong>片段替换</strong>的一个作用。</p><p>Rust 中的宏有两种宏：<strong>声明式宏</strong>、<strong>过程宏</strong>。</p><h2 id="声明式宏（declarative-macros）"><a href="#声明式宏（declarative-macros）" class="headerlink" title="声明式宏（declarative macros）"></a>声明式宏（declarative macros）</h2><p>声明式宏也称为 <em><code>macro_rules!</code> 宏</em>，它允许你定义模式和替换规则，用于在代码中执行简单的文本替换。声明式宏类似于 C 语言中的宏替换，但更加强大和类型安全。声明式宏可以使用模式匹配、重复、递归等功能来定义宏，并且可以在宏中执行一些基本的代码转换。</p><p>声明式宏，顾名思义，是可以<strong>由用户自己声明的</strong>，声明时也可以调用其他已经声明好的宏。</p><p>比如我声明一个 <code>say_hello</code> 宏，让它去固定输出 <code>Hello, World!</code>：</p><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs rust"><span class="hljs-built_in">macro_rules!</span> say_hello &#123;<br>    () =&gt; &#123;<br>        <span class="hljs-built_in">println!</span>(<span class="hljs-string">&quot;Hello, World!&quot;</span>);<br>    &#125;;<br>&#125;<br></code></pre></td></tr></table></figure><p>然后我需要使用的时候，就这样子调用：</p><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs rust"><span class="hljs-keyword">fn</span> <span class="hljs-title function_">main</span>() &#123;<br>    say_hello!();<br>&#125;<br></code></pre></td></tr></table></figure><p>执行结果就是这样的：</p><figure class="highlight autohotkey"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs autohotkey"><span class="hljs-built_in">Hello,</span> World!<br></code></pre></td></tr></table></figure><h3 id="对比：Rust-声明式宏-vs-C-语言宏定义"><a href="#对比：Rust-声明式宏-vs-C-语言宏定义" class="headerlink" title="对比：Rust 声明式宏 vs C 语言宏定义"></a>对比：Rust 声明式宏 vs C 语言宏定义</h3><ol><li><p>模式匹配和重复</p><p>Rust 的声明式宏允许使用<strong>模式匹配和重复</strong>来定义更复杂的模板。你可以使用 <code>match</code>、<code>if</code>、<code>for</code> 等语法来对输入的 <code>token</code> 流进行匹配和处理。</p><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs rust"><span class="hljs-built_in">macro_rules!</span> print_range &#123;<br>    ($start:expr, $end:expr) =&gt; &#123;<br>        <span class="hljs-keyword">for</span> <span class="hljs-variable">i</span> <span class="hljs-keyword">in</span> $start..$end &#123;<br>            <span class="hljs-built_in">println!</span>(<span class="hljs-string">&quot;&#123;&#125;&quot;</span>, i);<br>        &#125;<br>    &#125;;<br>&#125;<br><br>print_range!(<span class="hljs-number">1</span>, <span class="hljs-number">5</span>);<br></code></pre></td></tr></table></figure><p>我可以直接在声明宏里面使用一个 for 循环，编译器预处理时候也知道这是个 for 循环。其实宏做到这样子，我个人感觉已经很接近函数了。</p><p>C 语言的宏定义也支持简单的模式匹配和重复，但功能相对受限，<strong>只能进行简单的文本替换和展开</strong>。</p><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">define</span> PRINT_RANGE(start, end) \</span><br><span class="hljs-meta">for (int i = start; i &lt; end; i++) &#123; \</span><br><span class="hljs-meta">    printf(<span class="hljs-string">&quot;%d\n&quot;</span>, i); \</span><br><span class="hljs-meta">&#125;</span><br><br>PRINT_RANGE(<span class="hljs-number">1</span>, <span class="hljs-number">5</span>);<br></code></pre></td></tr></table></figure><p>预处理的时候，编译器并不知道这个宏定义里面的语句是一个 for 循环。它只知道预处理的时候等价替换就是的了。</p><p>这样看来 Rust 的声明宏确实要更加灵活，我感觉已经可以成为半个函数了。</p></li><li><p>类型安全和错误检查：</p><p>Rust 的声明式宏在编译时可以进行类型检查和错误检查，可以避免一些常见的错误。</p><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs rust"><span class="hljs-built_in">macro_rules!</span> divide &#123;<br>    ($numerator:expr, <span class="hljs-number">0</span>) =&gt; &#123;<br>        <span class="hljs-built_in">panic!</span>(<span class="hljs-string">&quot;division by zero&quot;</span>);<br>    &#125;;<br>    ($numerator:expr, $denominator:expr) =&gt; &#123;<br>        $numerator / $denominator<br>    &#125;;<br>&#125;<br><br><span class="hljs-keyword">let</span> <span class="hljs-variable">result</span> = divide!(<span class="hljs-number">10</span>, <span class="hljs-number">0</span>);<br></code></pre></td></tr></table></figure><p>C 语言的宏定义没有类型检查和错误检查，需要自己去写，像这样一个除数为 0 的简单情况，如果不做处理，可能会导致一些潜在的错误。</p><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">define</span> DIVIDE(numerator, denominator) \</span><br><span class="hljs-meta">(denominator == 0 ? (fprintf(stderr, <span class="hljs-string">&quot;division by zero\n&quot;</span>), exit(EXIT_FAILURE), 0) : (numerator / denominator))</span><br><br><span class="hljs-type">int</span> result = DIVIDE(<span class="hljs-number">10</span>, <span class="hljs-number">0</span>);<br></code></pre></td></tr></table></figure><p>其实这个问题还是比较像第一条的，对于一些小的代码片段，也许我们不会太关注这个问题，但是一旦项目比较大，类型检查和错误检查就比较重要了。</p></li><li><p>代码生成和抽象：</p><p>Rust 的声明式宏可以生成更复杂和灵活的代码，允许对输入进行更多的操作和转换。</p><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs rust"><span class="hljs-built_in">macro_rules!</span> vec_of_strings &#123;<br>    ($($elem:expr),*) =&gt; &#123;<br>        <span class="hljs-built_in">vec!</span>[$($elem.<span class="hljs-title function_ invoke__">to_string</span>()),*]<br>    &#125;;<br>&#125;<br><br><span class="hljs-keyword">let</span> <span class="hljs-variable">v</span> = vec_of_strings![<span class="hljs-string">&quot;hello&quot;</span>, <span class="hljs-string">&quot;world&quot;</span>];<br></code></pre></td></tr></table></figure><p>C 语言的宏定义主要用于文本替换，功能相对较弱，难以实现复杂的代码生成和抽象。</p><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">define</span> VEC_OF_STRINGS(elem1, elem2) \</span><br><span class="hljs-meta">&#123;elem1, elem2&#125;</span><br><br><span class="hljs-type">const</span> <span class="hljs-type">char</span>* v[] = VEC_OF_STRINGS(<span class="hljs-string">&quot;hello&quot;</span>, <span class="hljs-string">&quot;world&quot;</span>);<br></code></pre></td></tr></table></figure></li></ol><p>其实这几条说到底也就是， Rust 的声明宏不像 C 的宏替换那样就是个简单的文本替换，它的功能更加丰富。</p><h2 id="过程宏（procedural-macros）"><a href="#过程宏（procedural-macros）" class="headerlink" title="过程宏（procedural macros）"></a>过程宏（procedural macros）</h2><p>过程宏通常以<strong>函数</strong>的形式定义，并接收一个或多个输入 token 流，然后根据这些输入生成新的代码。过程宏可以在代码的语法树级别进行操作，因此可以实现更高级的代码转换和分析。</p><p>过程宏分为三种类型：</p><h3 id="属性宏-Attribute-Macros"><a href="#属性宏-Attribute-Macros" class="headerlink" title="属性宏 (Attribute Macros)"></a>属性宏 (Attribute Macros)</h3><p>属性宏允许你在代码上方使用类似于注解的语法来应用宏，比如</p><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs rust"><span class="hljs-meta">#[derive(Debug)]</span><br></code></pre></td></tr></table></figure><p>就是一个常见的属性宏，用于自动为结构体或枚举类型实现 <code>Debug</code> trait。</p><h3 id="函数宏-Function-like-Macros"><a href="#函数宏-Function-like-Macros" class="headerlink" title="函数宏(Function-like Macros)"></a>函数宏(Function-like Macros)</h3><p>函数宏类似于声明式宏，但完全以<strong>函数</strong>的形式定义，可以更灵活地处理输入 token 流并生成代码。</p><h3 id="自定义派生宏-Custom-Derive-Macros"><a href="#自定义派生宏-Custom-Derive-Macros" class="headerlink" title="自定义派生宏 (Custom Derive Macros)"></a>自定义派生宏 (Custom Derive Macros)</h3><p>自定义派生宏允许编写用于自动实现 trait 或其他行为的宏，使得你可以为类型自动生成通用的实现代码。</p><p>刚刚提到的 <code>print!()</code> 就是一种过程宏。其实我也很好奇，几乎所有语言中，打印标准输出是被设计为一个<strong>函数</strong>的，而 Rust 为什么要采用宏这个设计方式。这个下文再聊。</p><h2 id="为什么标准输出被定义为一个宏？"><a href="#为什么标准输出被定义为一个宏？" class="headerlink" title="为什么标准输出被定义为一个宏？"></a>为什么标准输出被定义为一个宏？</h2><p>我们先来看一下 Rust 源码中对 <code>print!()</code> 宏的定义：</p><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs rust"><span class="hljs-meta">#[macro_export]</span><br><span class="hljs-meta">#[stable(feature = <span class="hljs-string">&quot;rust1&quot;</span>, since = <span class="hljs-string">&quot;1.0.0&quot;</span>)]</span><br><span class="hljs-meta">#[cfg_attr(not(test), rustc_diagnostic_item = <span class="hljs-string">&quot;print_macro&quot;</span>)]</span><br><span class="hljs-meta">#[allow_internal_unstable(print_internals)]</span><br><span class="hljs-built_in">macro_rules!</span> print &#123;<br>    ($($arg:tt)*) =&gt; &#123;&#123;<br>        $crate::io::_print($crate::<span class="hljs-built_in">format_args!</span>($($arg)*));<br>    &#125;&#125;;<br>&#125;<br></code></pre></td></tr></table></figure><p>至于为什么 print 是个宏，<a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/67509637/what-benefits-are-there-with-making-println-a-macro">Stack Overflow</a> 上也有人提出了这个问题。我的理解是：</p><ol><li><p>避免移动语义问题</p><p>在 Rust 中，过程宏可以自动引用其参数，即使参数在调用宏的代码中已经被使用过，也<strong>不会产生移动语义的问题</strong>。这是因为过程宏在编译时<strong>操作代码的语法树</strong>，而不是在运行时处理值的拷贝和移动。</p><p>对于普通的函数或方法，参数的所有权传递是显式的，一旦参数被使用，它就会被移动并在后续代码中不可再用。</p><p>这实际上是一个 Rust 所有权的问题。在 Rust 中，当一个值被传递给一个函数或者移动到另一个变量时，它的<strong>所有权就会转移</strong>到接收它的函数或者变量上。这种所有权转移被称为<em>移动（move）</em>。一旦值的所有权被移动，原始变量将<strong>不能再继续使用</strong>它。</p><p>也就是说，每个变量对于函数来说，<strong>只能用一次</strong>。当你调用一个函数并将一个拥有所有权的值传递给它时，函数可能会<strong>消费</strong>这个值并且<strong>不能再继续使用</strong>它。这是为了<strong>确保内存安全</strong>和<strong>避免悬垂指针</strong>的问题而设计的。所有权的问题，以后我单写一篇文章讲。</p><p>我们以一个简单的日志记录为例，我们先用过程宏去实现：</p><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs rust"><span class="hljs-built_in">macro_rules!</span> log &#123;<br>    ($level:expr, $($arg:tt)*) =&gt; &#123;<br>        <span class="hljs-built_in">println!</span>(<span class="hljs-string">&quot;&#123;&#125;: &#123;&#125;&quot;</span>, $level, <span class="hljs-built_in">format_args!</span>($($arg)*));<br>    &#125;;<br>&#125;<br><br><span class="hljs-keyword">fn</span> <span class="hljs-title function_">main</span>() &#123;<br>    <span class="hljs-keyword">let</span> <span class="hljs-variable">message</span> = <span class="hljs-string">&quot;An error occurred&quot;</span>.<span class="hljs-title function_ invoke__">to_string</span>();<br>    log!(<span class="hljs-string">&quot;ERROR&quot;</span>, <span class="hljs-string">&quot;Error message: &#123;&#125;&quot;</span>, message);<br>    <span class="hljs-comment">// 这里仍然可以继续使用 message</span><br>    <span class="hljs-built_in">println!</span>(<span class="hljs-string">&quot;Continuing to use message: &#123;&#125;&quot;</span>, message);<br>&#125;<br></code></pre></td></tr></table></figure><p>我们再用函数等价替换一下，看看会怎么样：</p><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs rust"><span class="hljs-keyword">fn</span> <span class="hljs-title function_">log</span>(level: &amp;<span class="hljs-type">str</span>, message: <span class="hljs-type">String</span>) &#123;<br>    <span class="hljs-built_in">println!</span>(<span class="hljs-string">&quot;&#123;&#125;: &#123;&#125;&quot;</span>, level, message);<br>&#125;<br><br><span class="hljs-keyword">fn</span> <span class="hljs-title function_">main</span>() &#123;<br>    <span class="hljs-keyword">let</span> <span class="hljs-variable">message</span> = <span class="hljs-string">&quot;An error occurred&quot;</span>.<span class="hljs-title function_ invoke__">to_string</span>();<br>    <span class="hljs-title function_ invoke__">log</span>(<span class="hljs-string">&quot;ERROR&quot;</span>, message.<span class="hljs-title function_ invoke__">clone</span>());<br>    <span class="hljs-comment">// 尝试在此处继续使用 message</span><br>    <span class="hljs-built_in">println!</span>(<span class="hljs-string">&quot;Continuing to use message: &#123;&#125;&quot;</span>, message);<br>&#125;<br></code></pre></td></tr></table></figure><p>因为 <code>log</code> 函数会获取 <code>message</code> 的所有权，所以在函数调用之后，<code>message</code> 将被移动，导致后续的使用产生<strong>编译错误</strong>。而使用过程宏的情况下，由于参数的传递是基于宏的文本替换，并不会导致所有权的转移，因此后续对 <code>message</code> 的使用不会产生问题。</p><p>很显然，几乎所有的场景下，标准输出都是需要重复输出一些变量内容的，那么你也只能使用过程宏，而不能用一次性的函数。</p></li><li><p>接受任意数量的参数</p><p>过程宏可以接受<strong>任意数量</strong>的参数，这使得它们更加灵活和通用。你可以编写接受任意数量参数的宏来处理不同的场景。</p><p>而普通函数或方法的参数数量是<strong>固定</strong>的，若用函数实现，要么需要为每种情况都编写不同的函数或方法，要么想尽办法把各种情况转换成统一参数数量和格式的形式。</p></li><li><p>编译前就进行格式验证</p><p>过程宏可以在编译时<strong>验证格式字符串和参数的匹配</strong>，不匹配就不编译通过。C 语言中的 <code>printf</code> 函数在运行时才检查，运行的时候万一不匹配或者出现意料之外的结果，就很可能导致运行时出现 bug。</p></li></ol><p>当然这些只是 Rust 宏的一个很基础的部分，还有很多东西需要学习。很多东西也只是我自己的一个理解，如果这篇文章有什么错误或者不足，欢迎友好指出。</p></div><hr><div><div class="post-metas my-3"><div class="post-meta"><i class="iconfont icon-tags"></i> <a href="/tags/Rust-%E8%AF%AD%E8%A8%80/" class="print-no-link">#Rust 语言</a> <a href="/tags/%E5%AE%8F/" class="print-no-link">#宏</a> <a href="/tags/macro/" class="print-no-link">#macro</a></div></div><div class="license-box my-3"><div class="license-title"><div>随便讲讲 Rust 的 “宏”</div><div>https://gt-610.github.io/2024/03/28/rust-macro/</div></div><div class="license-meta"><div class="license-meta-item"><div>作者</div><div>GT610</div></div><div class="license-meta-item license-meta-date"><div>发布于</div><div>2024年3月28日</div></div><div class="license-meta-item"><div>许可协议</div><div><a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/"><span class="hint--top hint--rounded" aria-label="BY - 署名"><i class="iconfont icon-cc-by"></i></span></a></div></div></div><div class="license-icon iconfont"></div></div><div class="post-prevnext my-3"><article class="post-prev col-6"><a href="/2024/03/31/krdc-no-protocol-solution/" title="解决 KRDC 远程连接时没有协议的问题"><i class="iconfont icon-arrowleft"></i> <span class="hidden-mobile">解决 KRDC 远程连接时没有协议的问题</span> <span class="visible-mobile">上一篇</span></a></article><article class="post-next col-6"><a href="/2024/03/27/ncre-2-1903-1809/" title="2019 年 3 月 和 2018 年 9 月计算机二级 C 语言 错题整理"><span class="hidden-mobile">2019 年 3 月 和 2018 年 9 月计算机二级 C 语言 错题整理</span> <span class="visible-mobile">下一篇</span> <i class="iconfont icon-arrowright"></i></a></article></div></div><article id="comments" lazyload><div id="giscus" class="giscus"></div><script type="text/javascript">Fluid.utils.loadComments('#giscus', function() {
-        var options = {"repo":"GT-610/gt-610.github.io","repo-id":"R_kgDOOtrIJw","category":"General","category-id":"DIC_kwDOOtrIJ84Cq9bI","theme-light":"light","theme-dark":"dark","mapping":"title","reactions-enabled":1,"emit-metadata":0,"input-position":"top","lang":"zh-CN"};
-        var attributes = {};
-        for (let option in options) {
-          if (!option.startsWith('theme-')) {
-            var key = option.startsWith('data-') ? option : 'data-' + option;
-            attributes[key] = options[option];
-          }
-        }
-        var light = 'light';
-        var dark = 'dark';
-        window.GiscusThemeLight = light;
-        window.GiscusThemeDark = dark;
-        attributes['data-theme'] = document.documentElement.getAttribute('data-user-color-scheme') === 'dark' ? dark : light;
-        for (let attribute in attributes) {
-          var value = attributes[attribute];
-          if (value === undefined || value === null || value === '') {
-            delete attributes[attribute];
-          }
-        }
-        var s = document.createElement('script');
-        s.setAttribute('src', 'https://giscus.app/client.js');
-        s.setAttribute('crossorigin', 'anonymous');
-        for (let attribute in attributes) {
-          s.setAttribute(attribute, attributes[attribute]);
-        }
-        var ss = document.getElementsByTagName('script');
-        var e = ss.length > 0 ? ss[ss.length - 1] : document.head || document.documentElement;
-        e.parentNode.insertBefore(s, e.nextSibling);
-      });</script><noscript>Please enable JavaScript to view the comments</noscript></article></article></div></div></div><div class="side-col d-none d-lg-block col-lg-2"><aside class="sidebar" style="margin-left:-1rem"><div id="toc"><p class="toc-header"><i class="iconfont icon-list"></i> <span>目录</span></p><div class="toc-body" id="toc-body"></div></div></aside></div></div></div><script>Fluid.utils.createScript("https://lib.baomitu.com/mermaid/8.14.0/mermaid.min.js",function(){mermaid.initialize({theme:"default"}),Fluid.utils.listenDOMLoaded(function(){Fluid.events.registerRefreshCallback(function(){"mermaid"in window&&mermaid.init()})})})</script><a id="scroll-top-button" aria-label="TOP" href="#" role="button"><i class="iconfont icon-arrowup" aria-hidden="true"></i></a><div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable modal-lg" role="document"><div class="modal-content"><div class="modal-header text-center"><h4 class="modal-title w-100 font-weight-bold">搜索</h4><button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button></div><div class="modal-body mx-3"><div class="md-form mb-5"><input type="text" id="local-search-input" class="form-control validate"> <label data-error="x" data-success="v" for="local-search-input">关键词</label></div><div class="list-group" id="local-search-result"></div></div></div></div></div></main><footer><div class="footer-inner"><div class="footer-content"><a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a></div><div class="statistics"><span id="busuanzi_container_site_pv" style="display:none">总访问量 <span id="busuanzi_value_site_pv"></span> 次 </span><span id="busuanzi_container_site_uv" style="display:none">总访客数 <span id="busuanzi_value_site_uv"></span> 人</span></div></div></footer><script src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js"></script><link rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css"><script>NProgress.configure({showSpinner:!1,trickleSpeed:100}),NProgress.start(),window.addEventListener("load",function(){NProgress.done()})</script><script src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js"></script><script src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js"></script><script src="/js/events.js"></script><script src="/js/plugins.js"></script><script src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js"></script><script>!function(t){var e=Fluid.plugins.typing,i=t.getElementById("subtitle");i&&e&&e(i.getAttribute("data-typed-text"))}((window,document))</script><script src="/js/img-lazyload.js"></script><script>Fluid.utils.createScript("https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js",function(){var t,o=jQuery("#toc");0!==o.length&&window.tocbot&&(t=jQuery("#board-ctn").offset().top,window.tocbot.init(Object.assign({tocSelector:"#toc-body",contentSelector:".markdown-body",linkClass:"tocbot-link",activeLinkClass:"tocbot-active-link",listClass:"tocbot-list",isCollapsedClass:"tocbot-is-collapsed",collapsibleClass:"tocbot-is-collapsible",scrollSmooth:!0,includeTitleTags:!0,headingsOffset:-t},CONFIG.toc)),0<o.find(".toc-list-item").length&&o.css("visibility","visible"),Fluid.events.registerRefreshCallback(function(){if("tocbot"in window){tocbot.refresh();var t=jQuery("#toc");if(0===t.length||!tocbot)return;0<t.find(".toc-list-item").length&&t.css("visibility","visible")}}))})</script><script src="https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js"></script><script>Fluid.plugins.codeWidget()</script><script>Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
-    window.anchors.options = {
-      placement: CONFIG.anchorjs.placement,
-      visible  : CONFIG.anchorjs.visible
-    };
-    if (CONFIG.anchorjs.icon) {
-      window.anchors.options.icon = CONFIG.anchorjs.icon;
-    }
-    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
-    var res = [];
-    for (var item of el) {
-      res.push('.markdown-body > ' + item.trim());
-    }
-    if (CONFIG.anchorjs.placement === 'left') {
-      window.anchors.options.class = 'anchorjs-link-left';
-    }
-    window.anchors.add(res.join(', '));
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="keywords" content="Hexo Theme Redefine">
+    
+    <meta name="author" content="GT610">
+    <!-- preconnect -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-    Fluid.events.registerRefreshCallback(function() {
-      if ('anchors' in window) {
-        anchors.removeAll();
-        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
-        var res = [];
-        for (var item of el) {
-          res.push('.markdown-body > ' + item.trim());
+    
+        
+        
+        
+            <link rel="preconnect" href="https://evan.beee.top" crossorigin>
+        
+    
+    <!--- Seo Part-->
+    
+    <link rel="canonical" href="https://gt-610.github.io/2024/03/28/rust-macro/"/>
+    <meta name="robots" content="index,follow">
+    <meta name="googlebot" content="index,follow">
+    <meta name="revisit-after" content="1 days">
+    
+    
+    
+        
+        <meta name="description" content="Hexo Theme Redefine, Redefine Your Hexo Journey.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="随便讲讲 Rust 的 “宏”">
+<meta property="og:url" content="https://gt-610.github.io/2024/03/28/rust-macro/index.html">
+<meta property="og:site_name" content="GT610&#39;s Blog">
+<meta property="og:description" content="Hexo Theme Redefine, Redefine Your Hexo Journey.">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://gt-610.github.io/images/redefine-og.webp">
+<meta property="article:published_time" content="2024-03-28T09:04:56.000Z">
+<meta property="article:modified_time" content="2024-03-30T14:51:21.832Z">
+<meta property="article:author" content="GT610">
+<meta property="article:tag" content="Rust 语言">
+<meta property="article:tag" content="宏">
+<meta property="article:tag" content="macro">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://gt-610.github.io/images/redefine-og.webp">
+    
+    
+    <!--- Icon Part-->
+    <link rel="icon" type="image/png" href="https://avatars.githubusercontent.com/u/79314033?v=4&amp;size=256" sizes="192x192">
+    <link rel="apple-touch-icon" sizes="180x180" href="https://avatars.githubusercontent.com/u/79314033?v=4&amp;size=256">
+    <meta name="theme-color" content="#6750A4">
+    <link rel="shortcut icon" href="https://avatars.githubusercontent.com/u/79314033?v=4&size=256">
+    <!--- Page Info-->
+    
+    <title>
+        
+            随便讲讲 Rust 的 “宏” | GT610&#39;s blog
+        
+    </title>
+
+    <link rel="stylesheet" href="https://evan.beee.top/projects/hexo-theme-redefine@2.8.2/source/fonts/Chillax/chillax.css">
+
+    <!--- Inject Part-->
+    
+
+    
+<link rel="stylesheet" href="/css/style.css">
+
+
+    
+        <link rel="stylesheet" href="https://evan.beee.top/projects/hexo-theme-redefine@2.8.2/source/css/build/tailwind.css">
+    
+
+    <link rel="stylesheet" href="https://evan.beee.top/projects/hexo-theme-redefine@2.8.2/source/fonts/GeistMono/geist-mono.css">
+    <link rel="stylesheet" href="https://evan.beee.top/projects/hexo-theme-redefine@2.8.2/source/fonts/Geist/geist.css">
+    <!--- Font Part-->
+    
+    
+    
+    
+    
+    
+
+    <script id="hexo-configurations">
+    window.config = {"hostname":"gt-610.github.io","root":"/","language":"zh-CN","path":"search.json"};
+    window.theme = {"articles":{"style":{"font_size":"16px","line_height":1.5,"image_border_radius":"14px","image_alignment":"center","image_caption":false,"link_icon":true,"delete_mask":false,"title_alignment":"left","headings_top_spacing":{"h1":"3.2rem","h2":"2.4rem","h3":"1.9rem","h4":"1.6rem","h5":"1.4rem","h6":"1.3rem"}},"word_count":{"enable":true,"count":true,"min2read":true},"author_label":{"enable":true,"auto":false,"list":[]},"code_block":{"copy":true,"style":"mac","highlight_theme":{"light":"github","dark":"vs2015"},"font":{"enable":false,"family":null,"url":null}},"toc":{"enable":true,"max_depth":3,"number":false,"expand":true,"init_open":true},"copyright":{"enable":true,"default":"cc_by"},"lazyload":true,"pangu_js":false,"recommendation":{"enable":false,"title":"推荐阅读","limit":3,"mobile_limit":2,"placeholder":"/images/wallhaven-wqery6-light.webp","skip_dirs":[]}},"colors":{"primary":"#6750A4","secondary":null,"default_mode":"light"},"global":{"fonts":{"chinese":{"enable":false,"family":null,"url":null},"english":{"enable":false,"family":null,"url":null},"title":{"enable":false,"family":null,"url":null}},"content_max_width":"1000px","sidebar_width":"210px","hover":{"shadow":true,"scale":false},"scroll_progress":{"bar":false,"percentage":true},"website_counter":{"url":"https://cn.vercount.one/js","enable":true,"site_pv":true,"site_uv":true,"post_pv":true},"single_page":true,"preloader":{"enable":false,"custom_message":null},"open_graph":{"enable":true,"image":"/images/redefine-og.webp","description":"Hexo Theme Redefine, Redefine Your Hexo Journey."},"google_analytics":{"enable":false,"id":null}},"home_banner":{"enable":true,"style":"fixed","image":{"light":"/img/default.jpg","dark":"/img/default.jpg"},"title":"GT610's blog","subtitle":{"text":[],"hitokoto":{"enable":false,"show_author":false,"api":"https://v1.hitokoto.cn"},"typing_speed":100,"backing_speed":80,"starting_delay":500,"backing_delay":1500,"loop":true,"smart_backspace":true},"text_color":{"light":"#15259D","dark":"#15259D"},"text_style":{"title_size":"2.8rem","subtitle_size":"1.5rem","line_height":1.2},"custom_font":{"enable":false,"family":null,"url":null},"social_links":{"enable":true,"style":"default","links":{"github":"https://github.com/GT-610","instagram":null,"zhihu":null,"twitter":null,"email":null},"qrs":{"weixin":null}}},"plugins":{"feed":{"enable":false},"aplayer":{"enable":false,"type":"fixed","audios":[{"name":null,"artist":null,"url":null,"cover":null,"lrc":null}]},"mermaid":{"enable":true,"version":"11.4.1"}},"version":"2.8.2","navbar":{"auto_hide":false,"color":{"left":"#f78736","right":"#367df7","transparency":35},"width":{"home":"1200px","pages":"1000px"},"links":{"Home":{"path":"/","icon":"fa-regular fa-house"},"Archives":{"path":"/archives","icon":"fa-regular fa-archive"},"About":{"path":"/about","icon":"fa-regular fa-user"},"Friends":{"path":"/links","icon":"fa-regular fa-link"},"GitHub":{"path":"https://github.com/GT-610","icon":"fa-brands fa-github"}},"search":{"enable":true,"preload":true}},"page_templates":{"friends_column":3,"tags_style":"cloud"},"home":{"sidebar":{"enable":true,"position":"left","first_item":"menu","announcement":null,"show_on_mobile":true,"links":null},"article_date_format":"auto","excerpt_length":200,"categories":{"enable":true,"limit":3},"tags":{"enable":true,"limit":3}},"footerStart":"2024/2/1 11:45:14"};
+    window.lang_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"};
+    window.data = {"masonry":false};
+  </script>
+    
+    <!--- Fontawesome Part-->
+    <link rel="stylesheet" href="https://evan.beee.top/projects/hexo-theme-redefine@2.8.2/source/fontawesome/fontawesome.min.css">
+    <link rel="stylesheet" href="https://evan.beee.top/projects/hexo-theme-redefine@2.8.2/source/fontawesome/brands.min.css">
+    <link rel="stylesheet" href="https://evan.beee.top/projects/hexo-theme-redefine@2.8.2/source/fontawesome/solid.min.css">
+    <link rel="stylesheet" href="https://evan.beee.top/projects/hexo-theme-redefine@2.8.2/source/fontawesome/regular.min.css">
+    
+    
+    
+    
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 7.3.0"></head>
+
+
+
+<body>
+	<div class="progress-bar-container">
+	
+
+	
+	<span class="pjax-progress-bar"></span>
+	<!--        <span class="swup-progress-icon">-->
+	<!--            <i class="fa-solid fa-circle-notch fa-spin"></i>-->
+	<!--        </span>-->
+	
+</div>
+
+<main class="page-container" id="swup">
+
+	
+
+	<div class="main-content-container flex flex-col justify-between min-h-dvh">
+		<div class="main-content-header">
+			<header class="navbar-container px-6 md:px-12">
+    <div class="navbar-content transition-navbar ">
+        <div class="left">
+            
+            <a class="logo-title" href="/">
+                
+                GT610&#39;s blog
+                
+            </a>
+        </div>
+
+        <div class="right">
+            <!-- PC -->
+            <div class="desktop">
+                <ul class="navbar-list">
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   href="/"
+                                        >
+                                    <i class="fa-regular fa-house fa-fw"></i>
+                                    首页
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   href="/archives"
+                                        >
+                                    <i class="fa-regular fa-archive fa-fw"></i>
+                                    归档
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   href="/about"
+                                        >
+                                    <i class="fa-regular fa-user fa-fw"></i>
+                                    关于
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   href="/links"
+                                        >
+                                    <i class="fa-regular fa-link fa-fw"></i>
+                                    友情链接
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   target="_blank" rel="noopener" href="https://github.com/GT-610"
+                                        >
+                                    <i class="fa-brands fa-github fa-fw"></i>
+                                    GITHUB
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                    
+                        <li class="navbar-item search search-popup-trigger">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <!-- Mobile -->
+            <div class="mobile">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fa-solid fa-magnifying-glass"></i>
+                    </div>
+                
+                <div class="icon-item navbar-bar">
+                    <div class="navbar-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile sheet -->
+    <div class="navbar-drawer h-dvh w-full absolute top-0 left-0 bg-background-color flex flex-col justify-between">
+        <ul class="drawer-navbar-list flex flex-col px-4 justify-center items-start">
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           href="/"
+                        >
+                            <span>
+                                首页
+                            </span>
+                            
+                                <i class="fa-regular fa-house fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           href="/archives"
+                        >
+                            <span>
+                                归档
+                            </span>
+                            
+                                <i class="fa-regular fa-archive fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           href="/about"
+                        >
+                            <span>
+                                关于
+                            </span>
+                            
+                                <i class="fa-regular fa-user fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           href="/links"
+                        >
+                            <span>
+                                友情链接
+                            </span>
+                            
+                                <i class="fa-regular fa-link fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           target="_blank" rel="noopener" href="https://github.com/GT-610"
+                        >
+                            <span>
+                                GITHUB
+                            </span>
+                            
+                                <i class="fa-brands fa-github fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+
+            
+            
+        </ul>
+
+        <div class="statistics flex justify-around my-2.5">
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/tags">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">46</div>
+        <div class="label text-third-text-color text-sm">标签</div>
+    </a>
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/categories">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">6</div>
+        <div class="label text-third-text-color text-sm">分类</div>
+    </a>
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/archives">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">19</div>
+        <div class="label text-third-text-color text-sm">文章</div>
+    </a>
+</div>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+		</div>
+
+		<div class="main-content-body transition-fade-up">
+			
+
+			<div class="main-content">
+				<div class="post-page-container flex relative justify-between box-border w-full h-full">
+	<div class="article-content-container">
+
+		<div class="article-title relative w-full">
+			
+			<div class="w-full flex items-center pt-6 justify-start">
+				<h1 class="article-title-regular text-second-text-color tracking-tight text-4xl md:text-6xl font-semibold px-2 sm:px-6 md:px-8 py-3">随便讲讲 Rust 的 “宏”</h1>
+			</div>
+			
+		</div>
+
+		
+		<div class="article-header flex flex-row gap-2 items-center px-2 sm:px-6 md:px-8">
+			<div class="avatar w-[46px] h-[46px] flex-shrink-0 rounded-medium border border-border-color p-[1px]">
+				<img src="https://avatars.githubusercontent.com/u/79314033?v=4&size=64">
+			</div>
+			<div class="info flex flex-col justify-between">
+				<div class="author flex items-center">
+					<span class="name text-default-text-color text-lg font-semibold">GT610</span>
+					
+					<span class="author-label ml-1.5 text-xs px-2 py-0.5 rounded-small text-third-text-color border border-shadow-color-1">Lv3</span>
+					
+				</div>
+				<div class="meta-info">
+					<div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fa-regular fa-pen-fancy"></i>&nbsp;
+        <span class="desktop">2024-03-28 17:04:56</span>
+        <span class="mobile">2024-03-28 17:04:56</span>
+        <span class="hover-info">创建</span>
+    </span>
+    
+        <span class="article-date article-meta-item">
+            <i class="fa-regular fa-wrench"></i>&nbsp;
+            <span class="desktop">2024-03-30 22:51:21</span>
+            <span class="mobile">2024-03-30 22:51:21</span>
+            <span class="hover-info">更新</span>
+        </span>
+    
+
+    
+    
+        <span class="article-tags article-meta-item">
+            <i class="fa-regular fa-tags"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/tags/Rust-%E8%AF%AD%E8%A8%80/">Rust 语言</a>&nbsp;
+                    </li>
+                
+                    <li>
+                        | <a href="/tags/%E5%AE%8F/">宏</a>&nbsp;
+                    </li>
+                
+                    <li>
+                        | <a href="/tags/macro/">macro</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+
+    
+    
+    
+    
+        <span class="article-pv article-meta-item">
+            <i class="fa-regular fa-eye"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>
+        </span>
+    
+</div>
+
+				</div>
+			</div>
+		</div>
+		
+
+		
+
+
+		<div class="article-content markdown-body px-2 sm:px-6 md:px-8 pb-8">
+			<p>最近在看《通过例子学 Rust》，真切感受到了 Rust <del>有多么难学</del>设计有多么精巧。作为一门安全性和效率优先的编程语言，Rust 的语法个人感觉是半 C 半 Python，但结构上明显比二者都复杂。</p>
+<p>在写第一个语句 </p>
+<div class="code-container" data-rel="Rust"><figure class="iseeu highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">println!</span>(<span class="string">&quot;Hello, world!&quot;</span>);</span><br></pre></td></tr></table></figure></div>
+
+<p>的时候，我很好奇为什么 <code>println</code> 后面要加一个感叹号 <code>!</code>。查阅后得知，这是一种 Rust <strong>宏</strong>。</p>
+<h2 id="什么是宏？"><a href="#什么是宏？" class="headerlink" title="什么是宏？"></a>什么是宏？</h2><p>在 Rust 中，<em>宏（macros）</em> 是一种<strong>元编程的工具</strong>，允许你在编译时<strong>对代码进行模式匹配、转换和生成</strong>。宏允许你编写一些特定的代码模板，在编译时根据这些模板生成具体的代码。这使得你可以编写更加灵活、通用和高效的代码。</p>
+<p>其实说得简单点，这个宏和 C&#x2F;C++ 中的宏定义是一个性质的，起到<strong>片段替换</strong>的一个作用。</p>
+<p>Rust 中的宏有两种宏：<strong>声明式宏</strong>、<strong>过程宏</strong>。</p>
+<h2 id="声明式宏（declarative-macros）"><a href="#声明式宏（declarative-macros）" class="headerlink" title="声明式宏（declarative macros）"></a>声明式宏（declarative macros）</h2><p>声明式宏也称为 <em><code>macro_rules!</code> 宏</em>，它允许你定义模式和替换规则，用于在代码中执行简单的文本替换。声明式宏类似于 C 语言中的宏替换，但更加强大和类型安全。声明式宏可以使用模式匹配、重复、递归等功能来定义宏，并且可以在宏中执行一些基本的代码转换。</p>
+<p>声明式宏，顾名思义，是可以<strong>由用户自己声明的</strong>，声明时也可以调用其他已经声明好的宏。</p>
+<p>比如我声明一个 <code>say_hello</code> 宏，让它去固定输出 <code>Hello, World!</code>：</p>
+<div class="code-container" data-rel="Rust"><figure class="iseeu highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">macro_rules!</span> say_hello &#123;</span><br><span class="line">    () =&gt; &#123;</span><br><span class="line">        <span class="built_in">println!</span>(<span class="string">&quot;Hello, World!&quot;</span>);</span><br><span class="line">    &#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>然后我需要使用的时候，就这样子调用：</p>
+<div class="code-container" data-rel="Rust"><figure class="iseeu highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    say_hello!();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>执行结果就是这样的：</p>
+<div class="code-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Hello, World!</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="对比：Rust-声明式宏-vs-C-语言宏定义"><a href="#对比：Rust-声明式宏-vs-C-语言宏定义" class="headerlink" title="对比：Rust 声明式宏 vs C 语言宏定义"></a>对比：Rust 声明式宏 vs C 语言宏定义</h3><ol>
+<li><p>模式匹配和重复</p>
+<p> Rust 的声明式宏允许使用<strong>模式匹配和重复</strong>来定义更复杂的模板。你可以使用 <code>match</code>、<code>if</code>、<code>for</code> 等语法来对输入的 <code>token</code> 流进行匹配和处理。</p>
+ <div class="code-container" data-rel="Rust"><figure class="iseeu highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">macro_rules!</span> print_range &#123;</span><br><span class="line">    ($start:expr, $end:expr) =&gt; &#123;</span><br><span class="line">        <span class="keyword">for</span> <span class="variable">i</span> <span class="keyword">in</span> $start..$end &#123;</span><br><span class="line">            <span class="built_in">println!</span>(<span class="string">&quot;&#123;&#125;&quot;</span>, i);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">print_range!(<span class="number">1</span>, <span class="number">5</span>);</span><br></pre></td></tr></table></figure></div>
+
+<p> 我可以直接在声明宏里面使用一个 for 循环，编译器预处理时候也知道这是个 for 循环。其实宏做到这样子，我个人感觉已经很接近函数了。</p>
+<p> C 语言的宏定义也支持简单的模式匹配和重复，但功能相对受限，<strong>只能进行简单的文本替换和展开</strong>。</p>
+ <div class="code-container" data-rel="C"><figure class="iseeu highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> PRINT_RANGE(start, end) \</span></span><br><span class="line"><span class="meta">for (int i = start; i &lt; end; i++) &#123; \</span></span><br><span class="line"><span class="meta">    printf(<span class="string">&quot;%d\n&quot;</span>, i); \</span></span><br><span class="line"><span class="meta">&#125;</span></span><br><span class="line"></span><br><span class="line">PRINT_RANGE(<span class="number">1</span>, <span class="number">5</span>);</span><br></pre></td></tr></table></figure></div>
+
+<p> 预处理的时候，编译器并不知道这个宏定义里面的语句是一个 for 循环。它只知道预处理的时候等价替换就是的了。</p>
+<p> 这样看来 Rust 的声明宏确实要更加灵活，我感觉已经可以成为半个函数了。</p>
+</li>
+<li><p>类型安全和错误检查：</p>
+<p> Rust 的声明式宏在编译时可以进行类型检查和错误检查，可以避免一些常见的错误。</p>
+ <div class="code-container" data-rel="Rust"><figure class="iseeu highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">macro_rules!</span> divide &#123;</span><br><span class="line">    ($numerator:expr, <span class="number">0</span>) =&gt; &#123;</span><br><span class="line">        <span class="built_in">panic!</span>(<span class="string">&quot;division by zero&quot;</span>);</span><br><span class="line">    &#125;;</span><br><span class="line">    ($numerator:expr, $denominator:expr) =&gt; &#123;</span><br><span class="line">        $numerator / $denominator</span><br><span class="line">    &#125;;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> <span class="variable">result</span> = divide!(<span class="number">10</span>, <span class="number">0</span>);</span><br></pre></td></tr></table></figure></div>
+
+<p> C 语言的宏定义没有类型检查和错误检查，需要自己去写，像这样一个除数为 0 的简单情况，如果不做处理，可能会导致一些潜在的错误。</p>
+ <div class="code-container" data-rel="C"><figure class="iseeu highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> DIVIDE(numerator, denominator) \</span></span><br><span class="line"><span class="meta">(denominator == 0 ? (fprintf(stderr, <span class="string">&quot;division by zero\n&quot;</span>), exit(EXIT_FAILURE), 0) : (numerator / denominator))</span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> result = DIVIDE(<span class="number">10</span>, <span class="number">0</span>);</span><br></pre></td></tr></table></figure></div>
+<p> 其实这个问题还是比较像第一条的，对于一些小的代码片段，也许我们不会太关注这个问题，但是一旦项目比较大，类型检查和错误检查就比较重要了。</p>
+</li>
+<li><p>代码生成和抽象：</p>
+<p> Rust 的声明式宏可以生成更复杂和灵活的代码，允许对输入进行更多的操作和转换。</p>
+ <div class="code-container" data-rel="Rust"><figure class="iseeu highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">macro_rules!</span> vec_of_strings &#123;</span><br><span class="line">    ($($elem:expr),*) =&gt; &#123;</span><br><span class="line">        <span class="built_in">vec!</span>[$($elem.<span class="title function_ invoke__">to_string</span>()),*]</span><br><span class="line">    &#125;;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> <span class="variable">v</span> = vec_of_strings![<span class="string">&quot;hello&quot;</span>, <span class="string">&quot;world&quot;</span>];</span><br></pre></td></tr></table></figure></div>
+
+
+<p> C 语言的宏定义主要用于文本替换，功能相对较弱，难以实现复杂的代码生成和抽象。</p>
+ <div class="code-container" data-rel="C"><figure class="iseeu highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> VEC_OF_STRINGS(elem1, elem2) \</span></span><br><span class="line"><span class="meta">&#123;elem1, elem2&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="type">const</span> <span class="type">char</span>* v[] = VEC_OF_STRINGS(<span class="string">&quot;hello&quot;</span>, <span class="string">&quot;world&quot;</span>);</span><br></pre></td></tr></table></figure></div></li>
+</ol>
+<p>其实这几条说到底也就是， Rust 的声明宏不像 C 的宏替换那样就是个简单的文本替换，它的功能更加丰富。</p>
+<h2 id="过程宏（procedural-macros）"><a href="#过程宏（procedural-macros）" class="headerlink" title="过程宏（procedural macros）"></a>过程宏（procedural macros）</h2><p>过程宏通常以<strong>函数</strong>的形式定义，并接收一个或多个输入 token 流，然后根据这些输入生成新的代码。过程宏可以在代码的语法树级别进行操作，因此可以实现更高级的代码转换和分析。</p>
+<p>过程宏分为三种类型：</p>
+<h3 id="属性宏-Attribute-Macros"><a href="#属性宏-Attribute-Macros" class="headerlink" title="属性宏 (Attribute Macros)"></a>属性宏 (Attribute Macros)</h3><p>属性宏允许你在代码上方使用类似于注解的语法来应用宏，比如</p>
+<div class="code-container" data-rel="Rust"><figure class="iseeu highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#[derive(Debug)]</span></span><br></pre></td></tr></table></figure></div>
+<p>就是一个常见的属性宏，用于自动为结构体或枚举类型实现 <code>Debug</code> trait。</p>
+<h3 id="函数宏-Function-like-Macros"><a href="#函数宏-Function-like-Macros" class="headerlink" title="函数宏(Function-like Macros)"></a>函数宏(Function-like Macros)</h3><p>函数宏类似于声明式宏，但完全以<strong>函数</strong>的形式定义，可以更灵活地处理输入 token 流并生成代码。</p>
+<h3 id="自定义派生宏-Custom-Derive-Macros"><a href="#自定义派生宏-Custom-Derive-Macros" class="headerlink" title="自定义派生宏 (Custom Derive Macros)"></a>自定义派生宏 (Custom Derive Macros)</h3><p>自定义派生宏允许编写用于自动实现 trait 或其他行为的宏，使得你可以为类型自动生成通用的实现代码。</p>
+<p>刚刚提到的 <code>print!()</code> 就是一种过程宏。其实我也很好奇，几乎所有语言中，打印标准输出是被设计为一个<strong>函数</strong>的，而 Rust 为什么要采用宏这个设计方式。这个下文再聊。</p>
+<h2 id="为什么标准输出被定义为一个宏？"><a href="#为什么标准输出被定义为一个宏？" class="headerlink" title="为什么标准输出被定义为一个宏？"></a>为什么标准输出被定义为一个宏？</h2><p>我们先来看一下 Rust 源码中对 <code>print!()</code> 宏的定义：</p>
+<div class="code-container" data-rel="Rust"><figure class="iseeu highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#[macro_export]</span></span><br><span class="line"><span class="meta">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]</span></span><br><span class="line"><span class="meta">#[cfg_attr(not(test), rustc_diagnostic_item = <span class="string">&quot;print_macro&quot;</span>)]</span></span><br><span class="line"><span class="meta">#[allow_internal_unstable(print_internals)]</span></span><br><span class="line"><span class="built_in">macro_rules!</span> print &#123;</span><br><span class="line">    ($($arg:tt)*) =&gt; &#123;&#123;</span><br><span class="line">        $crate::io::_print($crate::<span class="built_in">format_args!</span>($($arg)*));</span><br><span class="line">    &#125;&#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<p>至于为什么 print 是个宏，<a class="link"   target="_blank" rel="noopener" href="https://stackoverflow.com/questions/67509637/what-benefits-are-there-with-making-println-a-macro" >Stack Overflow<i class="fa-solid fa-arrow-up-right ml-[0.2em] font-light align-text-top text-[0.7em] link-icon"></i></a> 上也有人提出了这个问题。我的理解是：</p>
+<ol>
+<li><p>避免移动语义问题</p>
+<p> 在 Rust 中，过程宏可以自动引用其参数，即使参数在调用宏的代码中已经被使用过，也<strong>不会产生移动语义的问题</strong>。这是因为过程宏在编译时<strong>操作代码的语法树</strong>，而不是在运行时处理值的拷贝和移动。</p>
+<p> 对于普通的函数或方法，参数的所有权传递是显式的，一旦参数被使用，它就会被移动并在后续代码中不可再用。</p>
+<p> 这实际上是一个 Rust 所有权的问题。在 Rust 中，当一个值被传递给一个函数或者移动到另一个变量时，它的<strong>所有权就会转移</strong>到接收它的函数或者变量上。这种所有权转移被称为<em>移动（move）</em>。一旦值的所有权被移动，原始变量将<strong>不能再继续使用</strong>它。</p>
+<p> 也就是说，每个变量对于函数来说，<strong>只能用一次</strong>。当你调用一个函数并将一个拥有所有权的值传递给它时，函数可能会<strong>消费</strong>这个值并且<strong>不能再继续使用</strong>它。这是为了<strong>确保内存安全</strong>和<strong>避免悬垂指针</strong>的问题而设计的。所有权的问题，以后我单写一篇文章讲。</p>
+<p> 我们以一个简单的日志记录为例，我们先用过程宏去实现：</p>
+ <div class="code-container" data-rel="Rust"><figure class="iseeu highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">macro_rules!</span> log &#123;</span><br><span class="line">    ($level:expr, $($arg:tt)*) =&gt; &#123;</span><br><span class="line">        <span class="built_in">println!</span>(<span class="string">&quot;&#123;&#125;: &#123;&#125;&quot;</span>, $level, <span class="built_in">format_args!</span>($($arg)*));</span><br><span class="line">    &#125;;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">message</span> = <span class="string">&quot;An error occurred&quot;</span>.<span class="title function_ invoke__">to_string</span>();</span><br><span class="line">    log!(<span class="string">&quot;ERROR&quot;</span>, <span class="string">&quot;Error message: &#123;&#125;&quot;</span>, message);</span><br><span class="line">    <span class="comment">// 这里仍然可以继续使用 message</span></span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;Continuing to use message: &#123;&#125;&quot;</span>, message);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p> 我们再用函数等价替换一下，看看会怎么样：</p>
+ <div class="code-container" data-rel="Rust"><figure class="iseeu highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">log</span>(level: &amp;<span class="type">str</span>, message: <span class="type">String</span>) &#123;</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;&#123;&#125;: &#123;&#125;&quot;</span>, level, message);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">message</span> = <span class="string">&quot;An error occurred&quot;</span>.<span class="title function_ invoke__">to_string</span>();</span><br><span class="line">    <span class="title function_ invoke__">log</span>(<span class="string">&quot;ERROR&quot;</span>, message.<span class="title function_ invoke__">clone</span>());</span><br><span class="line">    <span class="comment">// 尝试在此处继续使用 message</span></span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;Continuing to use message: &#123;&#125;&quot;</span>, message);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<p> 因为 <code>log</code> 函数会获取 <code>message</code> 的所有权，所以在函数调用之后，<code>message</code> 将被移动，导致后续的使用产生<strong>编译错误</strong>。而使用过程宏的情况下，由于参数的传递是基于宏的文本替换，并不会导致所有权的转移，因此后续对 <code>message</code> 的使用不会产生问题。</p>
+<p> 很显然，几乎所有的场景下，标准输出都是需要重复输出一些变量内容的，那么你也只能使用过程宏，而不能用一次性的函数。</p>
+</li>
+<li><p>接受任意数量的参数</p>
+<p> 过程宏可以接受<strong>任意数量</strong>的参数，这使得它们更加灵活和通用。你可以编写接受任意数量参数的宏来处理不同的场景。</p>
+<p> 而普通函数或方法的参数数量是<strong>固定</strong>的，若用函数实现，要么需要为每种情况都编写不同的函数或方法，要么想尽办法把各种情况转换成统一参数数量和格式的形式。</p>
+</li>
+<li><p>编译前就进行格式验证</p>
+<p> 过程宏可以在编译时<strong>验证格式字符串和参数的匹配</strong>，不匹配就不编译通过。C 语言中的 <code>printf</code> 函数在运行时才检查，运行的时候万一不匹配或者出现意料之外的结果，就很可能导致运行时出现 bug。</p>
+</li>
+</ol>
+<p>当然这些只是 Rust 宏的一个很基础的部分，还有很多东西需要学习。很多东西也只是我自己的一个理解，如果这篇文章有什么错误或者不足，欢迎友好指出。</p>
+
+		</div>
+
+		
+		<div class="post-copyright-info w-full my-8 px-2 sm:px-6 md:px-8">
+			<div class="article-copyright-info-container">
+    <ul>
+        <li><strong>标题:</strong> 随便讲讲 Rust 的 “宏”</li>
+        <li><strong>作者:</strong> GT610</li>
+        <li><strong>创建于
+                :</strong> 2024-03-28 17:04:56</li>
+        
+            <li>
+                <strong>更新于
+                    :</strong> 2024-03-30 22:51:21
+            </li>
+        
+        <li>
+            <strong>链接:</strong> https://gt-610.github.io/2024/03/28/rust-macro/
+        </li>
+        <li>
+            <strong>
+                版权声明:
+            </strong>
+            
+
+            
+                本文章采用 <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by/4.0">CC BY 4.0</a> 进行许可。
+            
+        </li>
+    </ul>
+</div>
+
+		</div>
+		
+
+		
+		<ul class="post-tags-box text-lg mt-1.5 flex-wrap justify-center flex md:hidden">
+			
+			<li class="tag-item mx-0.5">
+				<a href="/tags/Rust-%E8%AF%AD%E8%A8%80/">#Rust 语言</a>&nbsp;
+			</li>
+			
+			<li class="tag-item mx-0.5">
+				<a href="/tags/%E5%AE%8F/">#宏</a>&nbsp;
+			</li>
+			
+			<li class="tag-item mx-0.5">
+				<a href="/tags/macro/">#macro</a>&nbsp;
+			</li>
+			
+		</ul>
+		
+
+		
+
+		
+		<div class="article-nav my-8 flex justify-between items-center px-2 sm:px-6 md:px-8">
+			
+			<div class="article-prev border-border-color shadow-redefine-flat shadow-shadow-color-2 rounded-medium px-4 py-2 hover:shadow-redefine-flat-hover hover:shadow-shadow-color-2">
+				<a class="prev" rel="prev" href="/2024/03/31/krdc-no-protocol-solution/">
+					<span class="left arrow-icon flex justify-center items-center">
+						<i class="fa-solid fa-chevron-left"></i>
+					</span>
+					<span class="title flex justify-center items-center">
+						<span class="post-nav-title-item">解决 KRDC 远程连接时没有协议的问题</span>
+						<span class="post-nav-item">上一篇</span>
+					</span>
+				</a>
+			</div>
+			
+			
+			<div class="article-next border-border-color shadow-redefine-flat shadow-shadow-color-2 rounded-medium px-4 py-2 hover:shadow-redefine-flat-hover hover:shadow-shadow-color-2">
+				<a class="next" rel="next" href="/2024/03/27/ncre-2-1903-1809/">
+					<span class="title flex justify-center items-center">
+						<span class="post-nav-title-item">2019 年 3 月 和 2018 年 9 月计算机二级 C 语言 错题整理</span>
+						<span class="post-nav-item">下一篇</span>
+					</span>
+					<span class="right arrow-icon flex justify-center items-center">
+						<i class="fa-solid fa-chevron-right"></i>
+					</span>
+				</a>
+			</div>
+			
+		</div>
+		
+
+
+		
+		<div class="comment-container px-2 sm:px-6 md:px-8 pb-8">
+			<div class="comments-container mt-10 w-full ">
+    <div id="comment-anchor" class="w-full h-2.5"></div>
+    <div class="comment-area-title w-full my-1.5 md:my-2.5 text-xl md:text-3xl font-bold">
+        评论
+    </div>
+    
+
+        
+            
+    <div id="giscus-container"></div>
+    <script data-swup-reload-script defer>
+        async function loadGiscus() {
+            const giscusConfig = {
+                'src': 'https://giscus.app/client.js',
+                'data-repo': 'GT-610/gt-610.github.io',
+                'data-repo-id': 'R_kgDOOtrIJw',
+                'data-category': 'General',
+                'data-category-id': 'DIC_kwDOOtrIJ84Cq9bI',
+                'data-mapping': 'title',
+                'data-strict': '0',
+                'data-reactions-enabled': '1',
+                'data-emit-metadata': '1',
+                'data-theme': 'preferred_color_scheme',
+                'data-lang': 'zh-CN',
+                'data-input-position': 'top',
+                'data-loading': 'lazy',
+                'crossorigin': 'anonymous',
+                'async': true
+            }
+            const giscusScript = document.createElement('script');
+            for (const key in giscusConfig) {
+                giscusScript.setAttribute(key, giscusConfig[key]);
+            }
+            document.getElementById('giscus-container').appendChild(giscusScript);
         }
-        if (CONFIG.anchorjs.placement === 'left') {
-          anchors.options.class = 'anchorjs-link-left';
+        if ('true') {
+            let loadGiscusTimeout = setTimeout(() => {
+                loadGiscus();
+                clearTimeout(loadGiscusTimeout);
+            }, 1000);
+        } else {
+            document.addEventListener('DOMContentLoaded', loadGiscus);
         }
-        anchors.add(res.join(', '));
-      }
+    </script>
+
+
+        
+        
+    
+</div>
+
+		</div>
+		
+	</div>
+
+	
+	<div class="toc-content-container">
+		<div class="post-toc-wrap">
+	<div class="post-toc">
+		<div class="toc-title">目录</div>
+		<div class="page-title">随便讲讲 Rust 的 “宏”</div>
+		<ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E5%AE%8F%EF%BC%9F"><span class="nav-text">什么是宏？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A3%B0%E6%98%8E%E5%BC%8F%E5%AE%8F%EF%BC%88declarative-macros%EF%BC%89"><span class="nav-text">声明式宏（declarative macros）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AF%B9%E6%AF%94%EF%BC%9ARust-%E5%A3%B0%E6%98%8E%E5%BC%8F%E5%AE%8F-vs-C-%E8%AF%AD%E8%A8%80%E5%AE%8F%E5%AE%9A%E4%B9%89"><span class="nav-text">对比：Rust 声明式宏 vs C 语言宏定义</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%87%E7%A8%8B%E5%AE%8F%EF%BC%88procedural-macros%EF%BC%89"><span class="nav-text">过程宏（procedural macros）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B1%9E%E6%80%A7%E5%AE%8F-Attribute-Macros"><span class="nav-text">属性宏 (Attribute Macros)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%87%BD%E6%95%B0%E5%AE%8F-Function-like-Macros"><span class="nav-text">函数宏(Function-like Macros)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%87%AA%E5%AE%9A%E4%B9%89%E6%B4%BE%E7%94%9F%E5%AE%8F-Custom-Derive-Macros"><span class="nav-text">自定义派生宏 (Custom Derive Macros)</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E6%A0%87%E5%87%86%E8%BE%93%E5%87%BA%E8%A2%AB%E5%AE%9A%E4%B9%89%E4%B8%BA%E4%B8%80%E4%B8%AA%E5%AE%8F%EF%BC%9F"><span class="nav-text">为什么标准输出被定义为一个宏？</span></a></li></ol>
+
+	</div>
+</div>
+	</div>
+	
+</div>
+			</div>
+
+			
+		</div>
+
+		<div class="main-content-footer">
+			<footer class="footer mt-5 py-5 h-auto text-base text-third-text-color relative border-t-2 border-t-border-color">
+    <div class="info-container py-3 text-center">
+        
+        <div class="text-center">
+            &copy;
+            
+              <span>2024</span>
+              -
+            
+            2025&nbsp;&nbsp;<i class="fa-solid fa-heart fa-beat" style="--fa-animation-duration: 0.5s; color: #f54545"></i>&nbsp;&nbsp;<a href="/">GT610</a>
+            
+                
+                <p class="post-count space-x-0.5">
+                    <span>
+                        共撰写了 19 篇文章
+                    </span>
+                    
+                </p>
+            
+        </div>
+        
+            <script data-swup-reload-script src="https://cn.vercount.one/js"></script>
+            <div class="relative text-center lg:absolute lg:right-[20px] lg:top-1/2 lg:-translate-y-1/2 lg:text-right">
+                
+                    <span id="busuanzi_container_site_uv" class="lg:!block">
+                        <span class="text-sm">访问人数</span>
+                        <span id="busuanzi_value_site_uv"></span>
+                    </span>
+                
+                
+                    <span id="busuanzi_container_site_pv" class="lg:!block">
+                        <span class="text-sm">总访问量</span>
+                        <span id="busuanzi_value_site_pv"></span>
+                    </span>
+                
+            </div>
+        
+        <div class="relative text-center lg:absolute lg:left-[20px] lg:top-1/2 lg:-translate-y-1/2 lg:text-left">
+            <span class="lg:block text-sm">由 <?xml version="1.0" encoding="utf-8"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg class="relative top-[2px] inline-block align-baseline" version="1.1" id="圖層_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="1rem" height="1rem" viewBox="0 0 512 512" enable-background="new 0 0 512 512" xml:space="preserve"><path fill="#0E83CD" d="M256.4,25.8l-200,115.5L56,371.5l199.6,114.7l200-115.5l0.4-230.2L256.4,25.8z M349,354.6l-18.4,10.7l-18.6-11V275H200v79.6l-18.4,10.7l-18.6-11v-197l18.5-10.6l18.5,10.8V237h112v-79.6l18.5-10.6l18.5,10.8V354.6z"/></svg><a target="_blank" class="text-base" href="https://hexo.io">Hexo</a> 驱动</span>
+            <span class="text-sm lg:block">主题&nbsp;<a class="text-base" target="_blank" href="https://github.com/EvanNotFound/hexo-theme-redefine">Redefine v2.8.2</a></span>
+        </div>
+        
+        
+            <div>
+                博客已运行 <span class="odometer" id="runtime_days" ></span> 天 <span class="odometer" id="runtime_hours"></span> 小时 <span class="odometer" id="runtime_minutes"></span> 分钟 <span class="odometer" id="runtime_seconds"></span> 秒
+            </div>
+        
+        
+            <script data-swup-reload-script>
+                try {
+                    function odometer_init() {
+                    const elements = document.querySelectorAll('.odometer');
+                    elements.forEach(el => {
+                        new Odometer({
+                            el,
+                            format: '( ddd).dd',
+                            duration: 200
+                        });
+                    });
+                    }
+                    odometer_init();
+                } catch (error) {}
+            </script>
+        
+        
+        
+    </div>  
+</footer>
+		</div>
+	</div>
+
+	
+	<div class="post-tools">
+		<div class="post-tools-container">
+	<ul class="article-tools-list">
+		<!-- TOC aside toggle -->
+		
+		<li class="right-bottom-tools page-aside-toggle">
+			<i class="fa-regular fa-outdent"></i>
+		</li>
+		
+
+		<!-- go comment -->
+		
+		<li class="go-comment">
+			<i class="fa-regular fa-comments"></i>
+		</li>
+		
+	</ul>
+</div>
+	</div>
+	
+
+	<div class="right-side-tools-container">
+		<div class="side-tools-container">
+	<ul class="hidden-tools-list">
+		<li class="right-bottom-tools tool-font-adjust-plus flex justify-center items-center">
+			<i class="fa-regular fa-magnifying-glass-plus"></i>
+		</li>
+
+		<li class="right-bottom-tools tool-font-adjust-minus flex justify-center items-center">
+			<i class="fa-regular fa-magnifying-glass-minus"></i>
+		</li>
+
+		<li class="right-bottom-tools tool-dark-light-toggle flex justify-center items-center">
+			<i class="fa-regular fa-moon"></i>
+		</li>
+
+		<!-- rss -->
+		
+
+		
+
+		<li class="right-bottom-tools tool-scroll-to-bottom flex justify-center items-center">
+			<i class="fa-regular fa-arrow-down"></i>
+		</li>
+	</ul>
+
+	<ul class="visible-tools-list">
+		<li class="right-bottom-tools toggle-tools-list flex justify-center items-center">
+			<i class="fa-regular fa-cog fa-spin"></i>
+		</li>
+		
+		<li class="right-bottom-tools tool-scroll-to-top flex justify-center items-center">
+			<i class="arrow-up fas fa-arrow-up"></i>
+			<span class="percent"></span>
+		</li>
+		
+		
+	</ul>
+</div>
+	</div>
+
+	<div class="image-viewer-container">
+	<img src="">
+</div>
+
+	
+	<div class="search-pop-overlay">
+	<div class="popup search-popup">
+		<div class="search-header">
+			<span class="search-input-field-pre">
+				<i class="fa-solid fa-keyboard"></i>
+			</span>
+			<div class="search-input-container">
+				<input autocomplete="off" autocorrect="off" autocapitalize="off" placeholder="站内搜索您需要的内容..." spellcheck="false" type="search" class="search-input">
+			</div>
+			<span class="popup-btn-close">
+				<i class="fa-solid fa-times"></i>
+			</span>
+		</div>
+		<div id="search-result">
+			<div id="no-result">
+				<i class="fa-solid fa-spinner fa-spin-pulse fa-5x fa-fw"></i>
+			</div>
+		</div>
+	</div>
+</div>
+	
+
+</main>
+
+
+<script  src="https://evan.beee.top/projects/hexo-theme-redefine@2.8.2/source/js/build/libs/Swup.min.js" ></script><script  src="https://evan.beee.top/projects/hexo-theme-redefine@2.8.2/source/js/build/libs/SwupSlideTheme.min.js" ></script><script  src="https://evan.beee.top/projects/hexo-theme-redefine@2.8.2/source/js/build/libs/SwupScriptsPlugin.min.js" ></script><script  src="https://evan.beee.top/projects/hexo-theme-redefine@2.8.2/source/js/build/libs/SwupProgressPlugin.min.js" ></script><script  src="https://evan.beee.top/projects/hexo-theme-redefine@2.8.2/source/js/build/libs/SwupScrollPlugin.min.js" ></script><script  src="https://evan.beee.top/projects/hexo-theme-redefine@2.8.2/source/js/build/libs/SwupPreloadPlugin.min.js" ></script>
+<script>
+    const swup = new Swup({
+        plugins: [
+            new SwupScriptsPlugin({
+                optin: true,
+            }),
+            new SwupProgressPlugin(),
+            new SwupScrollPlugin({
+                offset: 80,
+            }),
+            new SwupSlideTheme({
+                mainElement: ".main-content-body",
+            }),
+            new SwupPreloadPlugin(),
+        ],
+        containers: ["#swup"],
     });
-  });</script><script>Fluid.utils.createScript("https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js",function(){Fluid.plugins.fancyBox()})</script><script>Fluid.plugins.imageCaption()</script><script src="/js/local-search.js"></script><script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><script src="/js/boot.js"></script><noscript><div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div></noscript></body></html>
+</script>
+
+
+
+
+	<script type="module" src="https://evan.beee.top/projects/hexo-theme-redefine@2.8.2/source/js/build/tools/imageViewer.js" ></script><script type="module" src="https://evan.beee.top/projects/hexo-theme-redefine@2.8.2/source/js/build/utils.js" ></script><script type="module" src="https://evan.beee.top/projects/hexo-theme-redefine@2.8.2/source/js/build/main.js" ></script><script type="module" src="https://evan.beee.top/projects/hexo-theme-redefine@2.8.2/source/js/build/layouts/navbarShrink.js" ></script><script type="module" src="https://evan.beee.top/projects/hexo-theme-redefine@2.8.2/source/js/build/tools/scrollTopBottom.js" ></script><script type="module" src="https://evan.beee.top/projects/hexo-theme-redefine@2.8.2/source/js/build/tools/lightDarkSwitch.js" ></script><script type="module" src="https://evan.beee.top/projects/hexo-theme-redefine@2.8.2/source/js/build/layouts/categoryList.js" ></script>
+
+
+    <script type="module" src="https://evan.beee.top/projects/hexo-theme-redefine@2.8.2/source/js/build/tools/localSearch.js" ></script>
+
+
+
+    <script type="module" src="https://evan.beee.top/projects/hexo-theme-redefine@2.8.2/source/js/build/tools/codeBlock.js" ></script>
+
+
+
+    <script type="module" src="https://evan.beee.top/projects/hexo-theme-redefine@2.8.2/source/js/build/layouts/lazyload.js" ></script>
+
+
+
+    <script  src="https://evan.beee.top/projects/hexo-theme-redefine@2.8.2/source/js/build/tools/runtime.js" ></script>
+    <script  src="https://evan.beee.top/projects/hexo-theme-redefine@2.8.2/source/js/build/libs/odometer.min.js" ></script>
+    <link rel="stylesheet" href="https://evan.beee.top/projects/hexo-theme-redefine@2.8.2/source/assets/odometer-theme-minimal.css">
+
+
+
+  <script  src="https://evan.beee.top/projects/hexo-theme-redefine@2.8.2/source/js/build/libs/Typed.min.js" ></script>
+  <script type="module" src="https://evan.beee.top/projects/hexo-theme-redefine@2.8.2/source/js/build/plugins/typed.js" ></script>
+
+
+
+    
+        <script  src="https://evan.beee.top/projects/hexo-theme-redefine@2.8.2/source/js/build/libs/mermaid.min.js" ></script>
+    
+    <script  src="https://evan.beee.top/projects/hexo-theme-redefine@2.8.2/source/js/build/plugins/mermaid.js" ></script>
+
+
+
+
+
+    <script  src="https://evan.beee.top/projects/hexo-theme-redefine@2.8.2/source/js/build/libs/anime.min.js" ></script>
+
+
+
+
+    <script type="module" src="https://evan.beee.top/projects/hexo-theme-redefine@2.8.2/source/js/build/tools/tocToggle.js" data-swup-reload-script></script><script type="module" src="https://evan.beee.top/projects/hexo-theme-redefine@2.8.2/source/js/build/layouts/toc.js" data-swup-reload-script></script><script type="module" src="https://evan.beee.top/projects/hexo-theme-redefine@2.8.2/source/js/build/plugins/tabs.js" data-swup-reload-script></script>
+
+
+<script  src="https://evan.beee.top/projects/hexo-theme-redefine@2.8.2/source/js/build/libs/moment-with-locales.min.js" data-swup-reload-script></script>
+<script type="module" src="https://evan.beee.top/projects/hexo-theme-redefine@2.8.2/source/js/build/layouts/essays.js" data-swup-reload-script></script>
+
+
+
+
+	
+</body>
+
+</html>
