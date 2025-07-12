@@ -672,7 +672,7 @@
 <p><figure class="image-caption"><img  
                      lazyload
                      src="/images/loading.svg"
-                     data-src="/2024/04/01/bfs-cpp/x86-router-from-scratch/nec8-transaction.jpg"
+                     data-src="/2025/07/12/build-a-x86-router-from-scratch/nec8-transaction.jpg"
                       alt="准系统交易记录"
                 ><figcaption>准系统交易记录</figcaption></figure></p>
 <p>NEC8 和 M720Q 就是一个型号的两个马甲，只是换了个外壳，毕竟 NEC 的个人电脑业务早就被联想收购了。</p>
@@ -681,14 +681,14 @@
 <p><figure class="image-caption"><img  
                      lazyload
                      src="/images/loading.svg"
-                     data-src="/2024/04/01/bfs-cpp/x86-router-from-scratch/82576ns-transaction.jpg"
+                     data-src="/2025/07/12/build-a-x86-router-from-scratch/82576ns-transaction.jpg"
                       alt="网卡交易记录"
                 ><figcaption>网卡交易记录</figcaption></figure></p>
 <p>我们还需要一个 M720Q 的 PCIe 转接卡，这是因为联想小主机的 PCIe 插槽不是标准形的。闲鱼蹲了好久蹲到一个 30 元包邮的，二话不说拿下。</p>
 <p><figure class="image-caption"><img  
                      lazyload
                      src="/images/loading.svg"
-                     data-src="/2024/04/01/bfs-cpp/x86-router-from-scratch/pcie-board-transaction.jpg"
+                     data-src="/2025/07/12/build-a-x86-router-from-scratch/pcie-board-transaction.jpg"
                       alt="PCIe 转接卡交易记录"
                 ><figcaption>PCIe 转接卡交易记录</figcaption></figure></p>
 <h2 id="🔧-系统安装与基础配置"><a href="#🔧-系统安装与基础配置" class="headerlink" title="🔧 系统安装与基础配置"></a>🔧 系统安装与基础配置</h2><h3 id="1-安装系统"><a href="#1-安装系统" class="headerlink" title="1. 安装系统"></a>1. 安装系统</h3><p>路由器系统有很多，提供 x86 固件的有 OpenWrt、ImmortalWrt、LEDE 等。</p>
@@ -710,13 +710,13 @@
 <p><figure class="image-caption"><img  
                      lazyload
                      src="/images/loading.svg"
-                     data-src="/2024/04/01/bfs-cpp/x86-router-from-scratch/openwrt-firm-select.jpeg"
+                     data-src="/2025/07/12/build-a-x86-router-from-scratch/openwrt-firm-select.jpeg"
                       alt="OpenWrt 固件选择页面"
                 ><figcaption>OpenWrt 固件选择页面</figcaption></figure></p>
 <p><figure class="image-caption"><img  
                      lazyload
                      src="/images/loading.svg"
-                     data-src="/2024/04/01/bfs-cpp/x86-router-from-scratch/immortalwrt-firm-select.jpeg"
+                     data-src="/2025/07/12/build-a-x86-router-from-scratch/immortalwrt-firm-select.jpeg"
                       alt="ImmortalWrt 固件选择页面"
                 ><figcaption>ImmortalWrt 固件选择页面</figcaption></figure></p>
 <h4 id="squashfs-与-ext4，我该选哪个？"><a href="#squashfs-与-ext4，我该选哪个？" class="headerlink" title="squashfs 与 ext4，我该选哪个？"></a><code>squashfs</code> 与 <code>ext4</code>，我该选哪个？</h4><p>在固件选择页面中，我们可以看到 <code>squashfs</code> 和 <code>ext4</code> 两种格式的固件。下面介绍这两种格式的区别。</p>
@@ -759,7 +759,7 @@
 <p><figure class="image-caption"><img  
                      lazyload
                      src="/images/loading.svg"
-                     data-src="/2024/04/01/bfs-cpp/x86-router-from-scratch/installation.png"
+                     data-src="/2025/07/12/build-a-x86-router-from-scratch/installation.png"
                       alt="命令执行结果"
                 ><figcaption>命令执行结果</figcaption></figure></p>
 <ol start="7">
@@ -769,7 +769,7 @@
 <p><figure class="image-caption"><img  
                      lazyload
                      src="/images/loading.svg"
-                     data-src="/2024/04/01/bfs-cpp/x86-router-from-scratch/console.png"
+                     data-src="/2025/07/12/build-a-x86-router-from-scratch/console.png"
                       alt="视频输出的终端界面"
                 ><figcaption>视频输出的终端界面</figcaption></figure></p>
 <h4 id="设置-root-密码"><a href="#设置-root-密码" class="headerlink" title="设置 root 密码"></a>设置 root 密码</h4>
@@ -848,20 +848,20 @@
 <p><figure class="image-caption"><img  
                      lazyload
                      src="/images/loading.svg"
-                     data-src="/2024/04/01/bfs-cpp/x86-router-from-scratch/add-wan.png"
+                     data-src="/2025/07/12/build-a-x86-router-from-scratch/add-wan.png"
                       alt="添加 WAN 接口"
                 ><figcaption>添加 WAN 接口</figcaption></figure></p>
 <p><figure class="image-caption"><img  
                      lazyload
                      src="/images/loading.svg"
-                     data-src="/2024/04/01/bfs-cpp/x86-router-from-scratch/add-wan6.png"
+                     data-src="/2025/07/12/build-a-x86-router-from-scratch/add-wan6.png"
                       alt="为 WAN 接口添加 IPv6"
                 ><figcaption>为 WAN 接口添加 IPv6</figcaption></figure></p>
 <h3 id="4-设置-LAN-接口"><a href="#4-设置-LAN-接口" class="headerlink" title="4. 设置 LAN 接口"></a>4. 设置 LAN 接口</h3><p>进入“网络”-“设备”，选择 <code>br-lan</code>，在“网桥”端口中勾选<strong>你想作为 LAN 口的接口</strong>。<strong>切记不要勾选 WAN 端口</strong>。</p>
 <p><figure class="image-caption"><img  
                      lazyload
                      src="/images/loading.svg"
-                     data-src="/2024/04/01/bfs-cpp/x86-router-from-scratch/add-lan.png"
+                     data-src="/2025/07/12/build-a-x86-router-from-scratch/add-lan.png"
                       alt="添加 LAN 接口"
                 ><figcaption>添加 LAN 接口</figcaption></figure></p>
 <h3 id="5-应用"><a href="#5-应用" class="headerlink" title="5. 应用"></a>5. 应用</h3><p>点击“保存并应用”之后，将网线接入 WAN 口，将需要的设备接入 LAN 口，然后通过 <code>br-lan</code> 上的 <code>IPv4 地址</code>（默认是 <code>192.168.1.1</code>）访问你的路由器。</p>
@@ -870,7 +870,7 @@
 <p><figure class="image-caption"><img  
                      lazyload
                      src="/images/loading.svg"
-                     data-src="/2024/04/01/bfs-cpp/x86-router-from-scratch/radio-list.png"
+                     data-src="/2025/07/12/build-a-x86-router-from-scratch/radio-list.png"
                       alt="可以看到我只开了 2.4GHz"
                 ><figcaption>可以看到我只开了 2.4GHz</figcaption></figure></p>
 <p>接下来创建一个无线网络。点击你想使用的 <code>radio</code> 设备右侧的“添加”按钮，在“设备配置”-“工作频率”中，根据情况选择“模式”和“带宽”，“信道”选择 <code>auto</code>，通道宽度不动或者选择最大的。</p>
@@ -910,7 +910,7 @@
 <p><figure class="image-caption"><img  
                      lazyload
                      src="/images/loading.svg"
-                     data-src="/2024/04/01/bfs-cpp/x86-router-from-scratch/wifi-conf.jpeg"
+                     data-src="/2025/07/12/build-a-x86-router-from-scratch/wifi-conf.jpeg"
                       alt="参考配置"
                 ><figcaption>参考配置</figcaption></figure></p>
 <p>如果保存后没有启用，点击无线网络右边的“启用”按钮。如果还是没有启用，或启用后无线网无法连接、无法上网，请检查配置是否正确。</p>
@@ -924,7 +924,7 @@
 <p><figure class="image-caption"><img  
                      lazyload
                      src="/images/loading.svg"
-                     data-src="/2024/04/01/bfs-cpp/x86-router-from-scratch/docker-search-result.jpeg"
+                     data-src="/2025/07/12/build-a-x86-router-from-scratch/docker-search-result.jpeg"
                       alt="推荐安装的软件包"
                 ><figcaption>推荐安装的软件包</figcaption></figure></p>
 <p>然后执行以下命令让 Dockers 开机启动：</p>
@@ -943,7 +943,7 @@
 <h2 id="💡-功耗与稳定性分析"><a href="#💡-功耗与稳定性分析" class="headerlink" title="💡 功耗与稳定性分析"></a>💡 功耗与稳定性分析</h2><p><figure class="image-caption"><img  
                      lazyload
                      src="/images/loading.svg"
-                     data-src="/2024/04/01/bfs-cpp/x86-router-from-scratch/1week-load.png"
+                     data-src="/2025/07/12/build-a-x86-router-from-scratch/1week-load.png"
                       alt="连续运行 5 天后的系统负载情况"
                 ><figcaption>连续运行 5 天后的系统负载情况</figcaption></figure></p>
 <p>我还没找到在系统内查看 CPU 实际功耗的方法，我也没有购买功率测量插座。但是从目前的运行情况来看，CPU负载大概在 20% 左右，频率高峰期满载，低谷期 1.0GHz 左右，自己估算每天的平均功耗应该在 25-35W 左右。</p>
@@ -952,7 +952,7 @@
 <h2 id="📝-写在最后"><a href="#📝-写在最后" class="headerlink" title="📝 写在最后"></a>📝 写在最后</h2><p><figure class="image-caption"><img  
                      lazyload
                      src="/images/loading.svg"
-                     data-src="/2024/04/01/bfs-cpp/x86-router-from-scratch/sys-info.png"
+                     data-src="/2025/07/12/build-a-x86-router-from-scratch/sys-info.png"
                       alt="我的软路由系统概况。已经稳定运行了两个月"
                 ><figcaption>我的软路由系统概况。已经稳定运行了两个月</figcaption></figure></p>
 <p>这是我第一次写那么长的文章，写得很详细，一方面是能尽量保留搭建软路由的全部细节，另一方面是想把过程和结果分享给更多人，希望对同样想搭建 x86 软路由的你，有所帮助。</p>

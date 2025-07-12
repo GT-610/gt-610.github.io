@@ -583,12 +583,12 @@
 
 		<div class="article-content markdown-body px-2 sm:px-6 md:px-8 pb-8">
 			<h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><p>Arch Linux 安装 KRDC 远程连接软件之后，准备连接 VNC 主机时，发现没有 VNC 协议可选：</p>
-<p><img  
+<p><figure class="image-caption"><img  
                      lazyload
                      src="/images/loading.svg"
                      data-src="/2024/03/31/krdc-no-protocol-solution/error_situation.png"
                       alt="错误页面"
-                ></p>
+                ><figcaption>错误页面</figcaption></figure></p>
 <h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><p>按所需要的连接协议，安装对应的软件包，然后重新打开软件：</p>
 <table>
 <thead>
@@ -607,25 +607,25 @@
 </tr>
 </tbody></table>
 <p>然后就能看到对应选项了。</p>
-<p><img  
+<p><figure class="image-caption"><img  
                      lazyload
                      src="/images/loading.svg"
                      data-src="/2024/03/31/krdc-no-protocol-solution/solved.png"
                       alt="解决"
-                ></p>
-<p>尝试连接一下 VNC 主机：<br><img  
+                ><figcaption>解决</figcaption></figure></p>
+<p>尝试连接一下 VNC 主机：<br><figure class="image-caption"><img  
                      lazyload
                      src="/images/loading.svg"
                      data-src="/2024/03/31/krdc-no-protocol-solution/demo.png"
                       alt="连接成功"
-                ></p>
+                ><figcaption>连接成功</figcaption></figure></p>
 <h2 id="原因"><a href="#原因" class="headerlink" title="原因"></a>原因</h2><p>Arch Linux 中的 KRDC 软件包，将 <code>libvncserver</code> 和 <code>freerdp2</code> 作为<strong>可选依赖</strong>，安装时默认不会附带安装这两个包，自然也就没有对应的协议支持。</p>
-<p><img  
+<p><figure class="image-caption"><img  
                      lazyload
                      src="/images/loading.svg"
                      data-src="/2024/03/31/krdc-no-protocol-solution/reason.png"
                       alt="原因"
-                ></p>
+                ><figcaption>原因</figcaption></figure></p>
 
 		</div>
 
