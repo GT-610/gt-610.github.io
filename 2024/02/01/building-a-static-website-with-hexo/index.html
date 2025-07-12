@@ -146,7 +146,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://gt-610.github.io/images/redefine-og.webp">
 <meta property="article:published_time" content="2024-02-01T14:55:39.000Z">
-<meta property="article:modified_time" content="2025-06-03T04:14:04.700Z">
+<meta property="article:modified_time" content="2025-07-12T14:46:44.175Z">
 <meta property="article:author" content="GT610">
 <meta property="article:tag" content="网站">
 <meta property="article:tag" content="建站">
@@ -498,8 +498,12 @@
 
 		<div class="article-title relative w-full">
 			
-			<div class="w-full flex items-center pt-6 justify-start">
-				<h1 class="article-title-regular text-second-text-color tracking-tight text-4xl md:text-6xl font-semibold px-2 sm:px-6 md:px-8 py-3">使用 Hexo 和 Fluid 搭建一个漂亮的静态网页博客</h1>
+			
+			
+			<img src="/img/banners/building-a-static-website-with-hexo.png" alt="使用 Hexo 和 Fluid 搭建一个漂亮的静态网页博客" class="w-full h-60 sm:h-72 md:h-80 object-cover sm:rounded-t-large dark:brightness-75" />
+			
+			<div class="w-full flex items-center absolute bottom-0 justify-start">
+				<h1 class="article-title-cover text-center mx-6 my-6 text-second-text-color bg-background-color-transparent px-4 py-3 text-3xl sm:text-4xl md:text-5xl font-semibold backdrop-blur-lg rounded-xl border border-border-color ">使用 Hexo 和 Fluid 搭建一个漂亮的静态网页博客</h1>
 			</div>
 			
 		</div>
@@ -527,8 +531,8 @@
     
         <span class="article-date article-meta-item">
             <i class="fa-regular fa-wrench"></i>&nbsp;
-            <span class="desktop">2025-06-03 12:14:04</span>
-            <span class="mobile">2025-06-03 12:14:04</span>
+            <span class="desktop">2025-07-12 22:46:44</span>
+            <span class="mobile">2025-07-12 22:46:44</span>
             <span class="hover-info">更新</span>
         </span>
     
@@ -617,12 +621,12 @@
 <p><del>反正我是直接从 AUR 上安装 hexo-cli 的。</del></p>
 <h2 id="部署网页源代码仓库"><a href="#部署网页源代码仓库" class="headerlink" title="部署网页源代码仓库"></a>部署网页源代码仓库</h2><p>新建一个空文件夹，执行：</p>
 <div class="code-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">hexo init</span><br><span class="line">npm install</span><br></pre></td></tr></table></figure></div>
-<p><img  
+<p><figure class="image-caption"><img  
                      lazyload
                      src="/images/loading.svg"
                      data-src="/2024/02/01/building-a-static-website-with-hexo/hexo-init.png"
                       alt="执行上述命令后的终端输出"
-                ></p>
+                ><figcaption>执行上述命令后的终端输出</figcaption></figure></p>
 <p>如果克隆 GitHub 仓库那一步比较慢或者连接失败，可以考虑加个代理。</p>
 <p>然后你会发现目录下多了很多东西，这就是你的<strong>网页源代码仓库</strong>，大概有这些东西：</p>
 <div class="code-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">_config.yml</span><br><span class="line">node_modules</span><br><span class="line">scaffolds</span><br><span class="line">.github</span><br><span class="line">package.json</span><br><span class="line"><span class="built_in">source</span></span><br><span class="line">_config.landscape.yml</span><br><span class="line">.gitignore</span><br><span class="line">package-lock.json</span><br><span class="line">themes</span><br></pre></td></tr></table></figure></div>
@@ -631,24 +635,24 @@
 <div class="code-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">hexo g <span class="comment"># 生成网页</span></span><br><span class="line">hexo s <span class="comment"># 启动本地服务器</span></span><br></pre></td></tr></table></figure></div>
 
 <p>浏览器访问 <code>http://localhost:4000</code> 即可看到你的第一个博客页面。</p>
-<p><img  
+<p><figure class="image-caption"><img  
                      lazyload
                      src="/images/loading.svg"
                      data-src="/2024/02/01/building-a-static-website-with-hexo/hexo-sample.png"
                       alt="默认的页面，采用默认的 Landscape 主题，简单干净"
-                ></p>
+                ><figcaption>默认的页面，采用默认的 Landscape 主题，简单干净</figcaption></figure></p>
 <h2 id="写作"><a href="#写作" class="headerlink" title="写作"></a>写作</h2><p>终端进入源代码文件夹，执行以下命令可以创建一篇文章：</p>
 <div class="code-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo new post <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure></div>
 
 <p>其中 <code>post</code> 和 <code>My New Post</code> 可以根据实际情况修改。详细信息可以查阅<a class="link"   target="_blank" rel="noopener" href="https://hexo.io/zh-cn/docs/writing" >官方文档<i class="fa-solid fa-arrow-up-right ml-[0.2em] font-light align-text-top text-[0.7em] link-icon"></i></a>。</p>
 <p>然后 <code>source</code> 文件夹中会出现一个 <code>My New Post.md</code> 文件，就可以使用 Markdown 编辑器在该文件中撰写文章了。</p>
 <p>写完后运行 <code>hexo g</code> 将文章渲染即可。然后你就能通过 <code>hexo s</code> 看到你的网页的更改了。</p>
-<p><img  
+<p><figure class="image-caption"><img  
                      lazyload
                      src="/images/loading.svg"
                      data-src="/2024/02/01/building-a-static-website-with-hexo/my-new-post-sample-blog.png"
                       alt="写好的内容呈现的就是这样子"
-                ></p>
+                ><figcaption>写好的内容呈现的就是这样子</figcaption></figure></p>
 <h2 id="部署到-Git-Pages"><a href="#部署到-Git-Pages" class="headerlink" title="部署到 Git Pages"></a>部署到 Git Pages</h2><p>Git Pages 是一个托管静态网站的最佳选择。这个可能没听说过，GitHub Pages 一定听说过吧。<code>Hexo</code> 可以<strong>一键部署</strong>到这样的静态网站托管服务上去。</p>
 <p>首先按照托管商的文档设置好仓库。具体怎么做取决于你要怎么去托管。以 Github Pages 为例，可以参照<a class="link"   target="_blank" rel="noopener" href="https://docs.github.com/zh/pages/getting-started-with-github-pages/creating-a-github-pages-site" >官方文档<i class="fa-solid fa-arrow-up-right ml-[0.2em] font-light align-text-top text-[0.7em] link-icon"></i></a>来建立一个 Github Pages 仓库。</p>
 <p>然后在源代码文件夹下安装 <code>hexo-deployer-git</code>：</p>
@@ -677,12 +681,12 @@
 <p> 生成的网页应该是这样：</p>
 </li>
 </ol>
-<p><img  
+<p><figure class="image-caption"><img  
                      lazyload
                      src="/images/loading.svg"
                      data-src="/2024/02/01/building-a-static-website-with-hexo/hexo-fluid-sample-blog.png"
                       alt="Fluid 初始页面"
-                ></p>
+                ><figcaption>Fluid 初始页面</figcaption></figure></p>
 <ol start="3">
 <li><p>创建「关于页」</p>
 <p> 首次使用主题的「关于页」需要手动创建：</p>
@@ -696,12 +700,12 @@
 <p> 效果应该是这样的：</p>
 </li>
 </ol>
-<p><img  
+<p><figure class="image-caption"><img  
                      lazyload
                      src="/images/loading.svg"
                      data-src="/2024/02/01/building-a-static-website-with-hexo/hexo-fluid-about-sample.png"
                       alt="关于页面初始样式"
-                ></p>
+                ><figcaption>关于页面初始样式</figcaption></figure></p>
 <p>更多的配置和参数可以参照<a class="link"   target="_blank" rel="noopener" href="https://hexo.fluid-dev.com/docs/" >官方文档<i class="fa-solid fa-arrow-up-right ml-[0.2em] font-light align-text-top text-[0.7em] link-icon"></i></a>，这里就不多说啦。</p>
 <p>于是呢，一个简单的静态博客就配置好了！</p>
 <p>就这样。</p>
@@ -719,7 +723,7 @@
         
             <li>
                 <strong>更新于
-                    :</strong> 2025-06-03 12:14:04
+                    :</strong> 2025-07-12 22:46:44
             </li>
         
         <li>
